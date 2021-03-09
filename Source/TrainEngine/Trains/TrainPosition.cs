@@ -1,9 +1,9 @@
 ﻿namespace TrainEngine.Trains
 {
-    public class TrainPosition
+    public interface ITrainPosition
     {
-        private bool IsMoving { set; get; }
-        private string CurrentDestination { set; get; }
-        private bool IsAtStation { set; get; }
+        bool IsMoving { get; }
+        string CurrentDestination { get; }
+        bool IsAtStation { get; }
     }
 }
