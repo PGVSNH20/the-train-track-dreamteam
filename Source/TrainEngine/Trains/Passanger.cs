@@ -2,7 +2,7 @@
 {
     public class Passanger
     {
-        int Id { get; }
-        string Name { get; }
+        public int Id { get; }
+        public string Name { get; }
     }
 }

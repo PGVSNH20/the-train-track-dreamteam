@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace TrainEngine.Trains
@@ -33,6 +34,12 @@ namespace TrainEngine.Trains
                     CurrentPassangers.Add(passenger);
 
                 else throw new Exception();
+            }
+
+            foreach (Passanger passenger in GettingOffPassengers)
+            {
+                if (CurrentPassangers.Any(p => p.Id == passenger.Id))
+                    CurrentPassangers.Remove(p => p.Id == passenger.Id);
             }
         }
 
