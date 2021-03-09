@@ -12,6 +12,7 @@ namespace TrainEngine.Trains
         public bool Operated { get; set; }
         public TrainPosition Position { get; set; }
         public List<Passanger> CurrentPassangers { get; set; }
+        public int MaxPassengersCount { get; set; }
 
         public Train (int id, string name, int maxSpeed, bool operated)
         {
@@ -19,6 +20,25 @@ namespace TrainEngine.Trains
             Name = name;
             MaxSpeed = maxSpeed;
             Operated = operated;
+            CurrentPassangers = new List<Passanger>();
+
+        }
+
+        public void UpdatePassengers(List<Passanger> GettingOnPassengers, List<Passanger> GettingOffPassengers)
+        {
+
+            foreach (Passanger passenger in GettingOnPassengers)
+            {
+                if (CurrentPassangers.Count < MaxPassengersCount)
+                    CurrentPassangers.Add(passenger);
+
+                else throw new Exception();
+            }
+        }
+
+        public void UpdateTrainPosition(TrainPosition trainPosition)
+        {
+            throw new NotImplementedException();
         }
     }
 }
