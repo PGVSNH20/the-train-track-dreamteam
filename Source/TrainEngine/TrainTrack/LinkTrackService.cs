@@ -6,7 +6,7 @@ namespace TrainEngine.TrainTrack
 {
     public class LinkTrackService
     {
-        public List<Link> Links { set; get; } = new List<Link>();
+        public List<Link> Links { get; } = new List<Link>();
         private char[,] _trainTrackMap;
         private (int x, int y) _prevPos = (0, 0);
         private (int x, int y) _currentPos = (0, 0);
@@ -63,105 +63,100 @@ namespace TrainEngine.TrainTrack
             }
         }
 
-        public void FindLinks()
+        public void AddLinks()
         {
-            AddLinks();
-
-            void AddLinks()
+            var link = new Link();
+            while (link.EndStation == null)
             {
-                var link = new Link();
-                while (link.EndStation == null)
-                {
-                    char? scanResult = ScanPointNeibours();
+                char? scanResult = ScanNeighbours();
 
+                if (IsLinkUnit(scanResult))
+                    link.LinkUnitsCount++;
+                if (scanResult == '=')
+                    link.CrossingsAtUnit.Add(link.LinkUnitsCount);
+
+                while (link.StartStation == null)
+                {
+                    link.StartStation = AddStartStation(scanResult);
+                }
+                while (scanResult != null)
+                {
+                    scanResult = ScanNeighbours();
                     if (IsLinkUnit(scanResult))
                         link.LinkUnitsCount++;
                     if (scanResult == '=')
                         link.CrossingsAtUnit.Add(link.LinkUnitsCount);
 
-                    while (link.StartStation == null)
+                    if (scanResult == '[')
                     {
-                        link.StartStation = AddStartStation(scanResult);
+                        var startPos = _prevPos;
+                        link.EndStation = AddEndStation(scanResult);
+                        if (!link.EndStation.IsLastStation)
+                        {
+                            _currentPos = startPos;
+                            AddLinks();
+                        }
+                        break;
                     }
-                    while (scanResult != null)
+                    if (scanResult == '<')
                     {
-                        scanResult = ScanPointNeibours();
-                        if (IsLinkUnit(scanResult))
-                            link.LinkUnitsCount++;
-                        if (scanResult == '=')
-                            link.CrossingsAtUnit.Add(link.LinkUnitsCount);
-
-                        if (scanResult == '[')
-                        {
-                            var startPos = _prevPos;
-                            link.EndStation = AddEndStation(scanResult);
-                            if (!link.EndStation.IsLastStation)
-                            {
-                                _currentPos = startPos;
-                                AddLinks();
-                            }
-                            break;
-                        }
-                        if (scanResult == '<')
-                        {
-                            AddBranchLink(link);
-                        }
+                        AddBranchLink(link);
                     }
                 }
-                Links.Add(link);
             }
+            Links.Add(link);
+        }
 
-            void AddBranchLink(Link mainLink)
+        private void AddBranchLink(Link mainLink)
+        {
+            var savedPrevPos = _prevPos;
+            var savedCurrentPos = _currentPos;
+            ScanNeighbours();
+            var ignorPos = _currentPos;
+            _prevPos = savedCurrentPos;
+            _currentPos = savedCurrentPos;
+
+            var branchLink = new Link()
             {
-                var savedPrevPos = _prevPos;
-                var savedCurrentPos = _currentPos;
-                ScanPointNeibours();
-                var ignorPos = _currentPos;
-                _prevPos = savedCurrentPos;
-                _currentPos = savedCurrentPos;
+                StartStation = mainLink.StartStation,
+                LinkUnitsCount = mainLink.LinkUnitsCount + 1
+            };
+            foreach (var crossing in mainLink.CrossingsAtUnit)
+                branchLink.CrossingsAtUnit.Add(crossing);
 
-                var branchLink = new Link()
+            while (branchLink.EndStation == null)
+            {
+                char? scanResult2 = ScanNeighbours(ignorPos);
+                while (scanResult2 != null)
                 {
-                    StartStation = mainLink.StartStation,
-                    LinkUnitsCount = mainLink.LinkUnitsCount + 1
-                };
-                foreach (var crossing in mainLink.CrossingsAtUnit)
-                    branchLink.CrossingsAtUnit.Add(crossing);
+                    scanResult2 = ScanNeighbours();
+                    if (IsLinkUnit(scanResult2))
+                        branchLink.LinkUnitsCount++;
+                    if (scanResult2 == '=')
+                        branchLink.CrossingsAtUnit.Add(branchLink.LinkUnitsCount);
 
-                while (branchLink.EndStation == null)
-                {
-                    char? scanResult2 = ScanPointNeibours(ignorPos);
-                    while (scanResult2 != null)
+                    if (scanResult2 == '[')
                     {
-                        scanResult2 = ScanPointNeibours();
-                        if (IsLinkUnit(scanResult2))
-                            branchLink.LinkUnitsCount++;
-                        if (scanResult2 == '=')
-                            branchLink.CrossingsAtUnit.Add(branchLink.LinkUnitsCount);
-
-                        if (scanResult2 == '[')
+                        var startPos = _prevPos;
+                        var endPos = _currentPos;
+                        branchLink.EndStation = AddEndStation(scanResult2);
+                        if (!branchLink.EndStation.IsLastStation)
                         {
-                            var startPos = _prevPos;
-                            var endPos = _currentPos;
-                            branchLink.EndStation = AddEndStation(scanResult2);
-                            if (!branchLink.EndStation.IsLastStation)
-                            {
-                                _currentPos = startPos;
-                                AddLinks();
-                            }
-                            _currentPos = endPos;
-                            break;
+                            _currentPos = startPos;
+                            AddLinks();
                         }
-                        if (scanResult2 == '<')
-                        {
-                            AddBranchLink(branchLink);
-                        }
+                        _currentPos = endPos;
+                        break;
+                    }
+                    if (scanResult2 == '<')
+                    {
+                        AddBranchLink(branchLink);
                     }
                 }
-                Links.Add(branchLink);
-                _prevPos = savedPrevPos;
-                _currentPos = savedCurrentPos;
             }
+            Links.Add(branchLink);
+            _prevPos = savedPrevPos;
+            _currentPos = savedCurrentPos;
         }
 
         private bool IsLinkUnit(char? scanResult)
@@ -182,12 +177,12 @@ namespace TrainEngine.TrainTrack
             string stationId = string.Empty;
             while (scanResult != ']')
             {
-                scanResult = ScanPointNeibours();
+                scanResult = ScanNeighbours();
                 if (scanResult == ']')
                 {
                     var savedPrevPos = _prevPos;
                     var savedCurrentPos = _currentPos;
-                    scanResult = ScanPointNeibours();
+                    scanResult = ScanNeighbours();
                     if (scanResult == null)
                     {
                         station.IsLastStation = true;
@@ -213,7 +208,7 @@ namespace TrainEngine.TrainTrack
 
             while (scanResult != ']')
             {
-                scanResult = ScanPointNeibours();
+                scanResult = ScanNeighbours();
                 if (scanResult == ']')
                     break;
                 stationId += scanResult.ToString();
@@ -222,7 +217,7 @@ namespace TrainEngine.TrainTrack
             return station;
         }
 
-        private char? ScanPointNeibours((int x, int y)? ignorPosition = null)
+        private char? ScanNeighbours((int x, int y)? ignorPosition = null)
         {
             (int x, int y) pOld = _prevPos;
             (int x, int y) p = _currentPos;
@@ -241,7 +236,7 @@ namespace TrainEngine.TrainTrack
             char? returnValue;
 
             foreach (var neighbor in neighbors)
-                if (CheckNeibhorAvailability(neighbor))
+                if (NeighbourExists(neighbor))
                 {
                     returnValue = CheckReturnValue(neighbor);
                     if (returnValue != ' ' && returnValue != null)
@@ -259,7 +254,7 @@ namespace TrainEngine.TrainTrack
                 return null;
             }
 
-            bool CheckNeibhorAvailability((int x, int y) p)
+            bool NeighbourExists((int x, int y) p)
             {
                 if (p.x >= 0 &&
                     p.x < maxX &&
