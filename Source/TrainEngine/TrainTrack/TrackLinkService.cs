@@ -4,14 +4,14 @@ using System.Text;
 
 namespace TrainEngine.TrainTrack
 {
-    public class LinkTrackService
+    public class TrackLinkService
     {
         public List<Link> Links { get; } = new List<Link>();
         private char[,] _trainTrackMap;
         private (int x, int y) _prevPos = (0, 0);
         private (int x, int y) _currentPos = (0, 0);
 
-        public LinkTrackService(string[] fileLines)
+        public TrackLinkService(string[] fileLines)
         {
             int longestLineLength = 0;
             foreach (string line in fileLines)

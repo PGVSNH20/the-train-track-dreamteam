@@ -15,8 +15,8 @@ namespace TrainConsole
 
             // Step 2:
             // Make the trains run in treads
-            string[] lines = System.IO.File.ReadAllLines(@"C:\Dev\Repos\dataankomst_kurs\the-train-track-dreamteam\Data\traintrack1.txt");
-            var linkTrackService = new LinkTrackService(lines);
+            string[] lines = System.IO.File.ReadAllLines(@"C:\Dev\Repos\dataankomst_kurs\the-train-track-dreamteam\Data\traintrack4.txt");
+            var linkTrackService = new TrackLinkService(lines);
             linkTrackService.PrintTrackMap();
             linkTrackService.AddLinks();
             foreach (var link in linkTrackService.Links)
