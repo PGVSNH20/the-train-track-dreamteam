@@ -125,6 +125,8 @@ namespace TrainEngine.TrainTrack
                     StartStation = mainLink.StartStation,
                     LinkUnitsCount = mainLink.LinkUnitsCount + 1
                 };
+                foreach (var crossing in mainLink.CrossingsAtUnit)
+                    branchLink.CrossingsAtUnit.Add(crossing);
 
                 while (branchLink.EndStation == null)
                 {
@@ -149,6 +151,10 @@ namespace TrainEngine.TrainTrack
                             }
                             _currentPos = endPos;
                             break;
+                        }
+                        if (scanResult2 == '<')
+                        {
+                            AddBranchLink(branchLink);
                         }
                     }
                 }
