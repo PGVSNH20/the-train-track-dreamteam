@@ -4,7 +4,11 @@ using System.Text;
 
 namespace TrainEngine.Tracks
 {
-    class station
+    class Station : ILinkNode
     {
+        public int ID { set; get; }
+        public string StationName { set; get; }
+        public bool IsEndstation { set; get; }
     }
+
 }
