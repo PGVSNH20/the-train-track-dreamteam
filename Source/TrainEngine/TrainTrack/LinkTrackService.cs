@@ -19,6 +19,9 @@ namespace TrainEngine.TrainTrack
                     longestLineLength = line.Length;
 
             _trainTrackMap = new char[fileLines.Length, longestLineLength];
+            for (var i = 0; i < _trainTrackMap.GetLength(0); i++)
+                for (var n = 0; n < _trainTrackMap.GetLength(1); n++)
+                    _trainTrackMap[i, n] = ' ';
 
             for (int x = 0; x < fileLines.Length; x++)
             {
@@ -31,77 +34,186 @@ namespace TrainEngine.TrainTrack
             }
         }
 
-        public void AddNewLink()
+        public void PrintTrackMap()
         {
-            var link = new Link();
-            while (link.EndStationId == null)
+            Console.Write($"|x,y");
+            for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
+                Console.Write($"|{y,-3}");
+            Console.WriteLine($"|");
+
+            RenderLineSeparator();
+
+            for (var x = 0; x < _trainTrackMap.GetLength(0); x++)
             {
-                char? scanResult = ScanPointNeibours();
-                while (link.StartStationId == null)
+                Console.Write($"{x,4}");
+                for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
                 {
-                    link.StartStationId = AddStation(scanResult);
+                    Console.Write($"| {_trainTrackMap[x, y]} ");
                 }
-                while ((scanResult = ScanPointNeibours()) != null)
-                {
-                    if (scanResult == '[')
-                    {
-                        link.EndStationId = AddStation(scanResult);
-                        break;
-                    }
-                    else link.LinkUnitsCount++;
-                    if (scanResult == '<')
-                    {
-                        var savedPrevPos = _prevPos;
-                        var savedCurrentPos = _currentPos;
-                        ScanPointNeibours();
-                        var ignorPos = _currentPos;
-                        _prevPos = savedCurrentPos;
-                        _currentPos = savedCurrentPos;
-
-                        var newLink = new Link()
-                        {
-                            StartStationId = link.StartStationId,
-                            LinkUnitsCount = link.LinkUnitsCount
-                        };
-
-                        while (newLink.EndStationId == null)
-                        {
-                            char? scanResult2 = ScanPointNeibours(ignorPos);
-                            while ((scanResult2 = ScanPointNeibours()) != null)
-                            {
-                                if (scanResult2 == '[')
-                                {
-                                    newLink.EndStationId = AddStation(scanResult2);
-                                    break;
-                                }
-                                else newLink.LinkUnitsCount++;
-                            }
-                        }
-
-                        Links.Add(newLink);
-                        _prevPos = savedCurrentPos;
-                        _currentPos = savedCurrentPos;
-                    }
-                    if (scanResult == '[')
-                    {
-                        link.EndStationId = AddStation(scanResult);
-                        break;
-                    }
-                }
+                Console.WriteLine($"|");
+                RenderLineSeparator();
             }
-            Links.Add(link);
+
+            void RenderLineSeparator()
+            {
+                Console.Write($"{' ',4}");
+                for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
+                    Console.Write($"|{"–––"}");
+                Console.WriteLine($"|");
+            }
         }
 
-        private int AddStation(char? scanResult)
+        public void FindLinks()
         {
+            AddLinks();
+
+            void AddLinks()
+            {
+                var link = new Link();
+                while (link.EndStation == null)
+                {
+                    char? scanResult = ScanPointNeibours();
+
+                    if (IsLinkUnit(scanResult))
+                        link.LinkUnitsCount++;
+                    if (scanResult == '=')
+                        link.CrossingsAtUnit.Add(link.LinkUnitsCount);
+
+                    while (link.StartStation == null)
+                    {
+                        link.StartStation = AddStartStation(scanResult);
+                    }
+                    while (scanResult != null)
+                    {
+                        scanResult = ScanPointNeibours();
+                        if (IsLinkUnit(scanResult))
+                            link.LinkUnitsCount++;
+                        if (scanResult == '=')
+                            link.CrossingsAtUnit.Add(link.LinkUnitsCount);
+
+                        if (scanResult == '[')
+                        {
+                            var startPos = _prevPos;
+                            link.EndStation = AddEndStation(scanResult);
+                            if (!link.EndStation.IsLastStation)
+                            {
+                                _currentPos = startPos;
+                                AddLinks();
+                            }
+                            break;
+                        }
+                        if (scanResult == '<')
+                        {
+                            AddBranchLink(link);
+                        }
+                    }
+                }
+                Links.Add(link);
+            }
+
+            void AddBranchLink(Link mainLink)
+            {
+                var savedPrevPos = _prevPos;
+                var savedCurrentPos = _currentPos;
+                ScanPointNeibours();
+                var ignorPos = _currentPos;
+                _prevPos = savedCurrentPos;
+                _currentPos = savedCurrentPos;
+
+                var branchLink = new Link()
+                {
+                    StartStation = mainLink.StartStation,
+                    LinkUnitsCount = mainLink.LinkUnitsCount + 1
+                };
+
+                while (branchLink.EndStation == null)
+                {
+                    char? scanResult2 = ScanPointNeibours(ignorPos);
+                    while (scanResult2 != null)
+                    {
+                        scanResult2 = ScanPointNeibours();
+                        if (IsLinkUnit(scanResult2))
+                            branchLink.LinkUnitsCount++;
+                        if (scanResult2 == '=')
+                            branchLink.CrossingsAtUnit.Add(branchLink.LinkUnitsCount);
+
+                        if (scanResult2 == '[')
+                        {
+                            var startPos = _prevPos;
+                            var endPos = _currentPos;
+                            branchLink.EndStation = AddEndStation(scanResult2);
+                            if (!branchLink.EndStation.IsLastStation)
+                            {
+                                _currentPos = startPos;
+                                AddLinks();
+                            }
+                            _currentPos = endPos;
+                            break;
+                        }
+                    }
+                }
+                Links.Add(branchLink);
+                _prevPos = savedPrevPos;
+                _currentPos = savedCurrentPos;
+            }
+        }
+
+        private bool IsLinkUnit(char? scanResult)
+        {
+            if (scanResult == '-' ||
+                scanResult == '>' ||
+                scanResult == '<' ||
+                scanResult == '/' ||
+                scanResult == '=' ||
+                scanResult == '\\')
+                return true;
+            return false;
+        }
+
+        private Station AddEndStation(char? scanResult)
+        {
+            var station = new Station();
             string stationId = string.Empty;
             while (scanResult != ']')
             {
                 scanResult = ScanPointNeibours();
-                if (scanResult == ']') break;
+                if (scanResult == ']')
+                {
+                    var savedPrevPos = _prevPos;
+                    var savedCurrentPos = _currentPos;
+                    scanResult = ScanPointNeibours();
+                    if (scanResult == null)
+                    {
+                        station.IsLastStation = true;
+                    }
+                    else station.IsLastStation = false;
+                    _prevPos = savedPrevPos;
+                    _currentPos = savedCurrentPos;
+                    break;
+                }
                 stationId += scanResult.ToString();
             }
-            return Convert.ToInt32(stationId);
+            station.Id = Convert.ToInt32(stationId);
+            return station;
+        }
+
+        private Station AddStartStation(char? scanResult)
+        {
+            var station = new Station();
+            string stationId = string.Empty;
+
+            if (_trainTrackMap[_currentPos.x, _currentPos.y - 1] == '-')
+                station.IsLastStation = false;
+
+            while (scanResult != ']')
+            {
+                scanResult = ScanPointNeibours();
+                if (scanResult == ']')
+                    break;
+                stationId += scanResult.ToString();
+            }
+            station.Id = Convert.ToInt32(stationId);
+            return station;
         }
 
         private char? ScanPointNeibours((int x, int y)? ignorPosition = null)
@@ -112,10 +224,10 @@ namespace TrainEngine.TrainTrack
             int maxX = _trainTrackMap.GetLength(0);
             int maxY = _trainTrackMap.GetLength(1);
             (int x, int y)[] neighbors = new (int x, int y)[8];
-            neighbors[0] = (p.x - 1, p.y - 1);
+            neighbors[0] = (p.x, p.y + 1);
             neighbors[1] = (p.x - 1, p.y);
             neighbors[2] = (p.x - 1, p.y + 1);
-            neighbors[3] = (p.x, p.y + 1);
+            neighbors[3] = (p.x - 1, p.y - 1);
             neighbors[4] = (p.x + 1, p.y + 1);
             neighbors[5] = (p.x + 1, p.y);
             neighbors[6] = (p.x + 1, p.y - 1);
