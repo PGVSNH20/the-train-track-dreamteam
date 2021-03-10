@@ -61,12 +61,109 @@ namespace TrainConsole.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string controllerlog {
+            get {
+                return ResourceManager.GetString("controllerlog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1;Misty Walton
+        ///2;Ianis Hayes
+        ///3:Dominykas Kidd
+        ///4;Kali Savage
+        ///5;Mathew Porter
+        ///6:Priscilla Marshall
+        ///10;Caio Thornton
+        ///11;Kaylem Mcbride
+        ///12;Austin Christian
+        ///7;Fiza Harper
+        ///8;Rhiana Murphy
+        ///9;Charis Moreno
+        ///13;Darryl Winter
+        ///14;Taran Smith
+        ///15;Haseeb Fellows
+        ///16;Angela Young
+        ///17;Virgil Brown
+        ///18;Naomi Hutchings
+        ///19;Georga Andrews
+        ///20;Ralph Black
+        ///21;Jada Benton
+        ///22;Sylvia Hood
+        ///23;Cherie Tomlinson
+        ///24;Lacie-Mae Contreras
+        ///25;Adele Bowen
+        ///26;Colby O&apos;Ryan
+        ///27;Efan Kane
+        ///28;Bartosz Tillman
+        ///29;Faiza Bishop        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string passengers {
+            get {
+                return ResourceManager.GetString("passengers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id|StationName|EndStation
+        ///1|Stonecro|true
+        ///2|Mount Juanceo|false
+        ///3|Grand Retro|true
+        ///4|Thielfic-In-Sladeno|false.
+        /// </summary>
+        internal static string stations {
+            get {
+                return ResourceManager.GetString("stations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TraindId,StationId,DepartureTime,ArrivalTime
+        ///2,1,10:20,null
+        ///2,2,10:45,10:43
+        ///2,3,null,10:59
+        ///3,3,10:23,null
+        ///3,4,10:55,10:53
+        ///3,1,null,11:15.
+        /// </summary>
+        internal static string timetable {
+            get {
+                return ResourceManager.GetString("timetable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Id,Name,MaxSpeed,Operated
+        ///1,Flying Scotsman,100,false
+        ///2,Golden Arrow,120,true
+        ///3,Lapplandståget,50,true
+        ///4,Norrlandståget,72,false.
+        /// </summary>
+        internal static string trains {
+            get {
+                return ResourceManager.GetString("trains", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to *[1]-------[3]
         ///.
         /// </summary>
         internal static string traintrack1 {
             get {
                 return ResourceManager.GetString("traintrack1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to *[1]---=--------[2]-------------[3]
+        ///.
+        /// </summary>
+        internal static string traintrack2 {
+            get {
+                return ResourceManager.GetString("traintrack2", resourceCulture);
             }
         }
         

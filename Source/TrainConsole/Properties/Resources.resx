@@ -118,8 +118,26 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="controllerlog" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\controllerlog.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="passengers" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\passengers.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="stations" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\stations.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="timetable" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\timetable.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="trains" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\trains.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="traintrack1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\traintrack1.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="traintrack2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\traintrack2.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="traintrack3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\traintrack3.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
