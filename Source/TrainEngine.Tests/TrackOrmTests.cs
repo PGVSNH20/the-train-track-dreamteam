@@ -34,5 +34,19 @@ namespace TrainEngine.Tests
             // Assert
             Assert.Equal(3, result.NumberOfTrackParts);
         }
+
+        [Fact]
+        public void When_ProvidingTwoStationsWithThreeTrackBetween_Expect_TheTrackToConcistOf5Parts()
+        {
+            // Arrange
+            string track = "[1]---[2]";
+            TrackOrm trackOrm = new TrackOrm();
+
+            // Act
+            var result = trackOrm.ParseTrackDescription(track);
+
+            // Assert
+            Assert.Equal(5, result.NumberOfTrackParts);
+        }
     }
 }
