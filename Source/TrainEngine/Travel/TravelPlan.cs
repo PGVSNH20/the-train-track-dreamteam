@@ -42,24 +42,15 @@ namespace TrainEngine.Travel
             return this;
         }
 
-        private void Load(string path)
+        public void Load(string path)
         {
             throw new NotImplementedException();
         }
 
-        private void Save(string path)
+        public void Save(string path)
         {
             throw new NotImplementedException();
         }
 
-        void ITravelPlan.Load(string path)
-        {
-            throw new NotImplementedException();
-        }
-
-        void ITravelPlan.Save(string path)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
