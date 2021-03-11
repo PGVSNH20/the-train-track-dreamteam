@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using TrainEngine.Tracks;
 using System.IO;
+using System.Text.Json;
 
 namespace TrainEngine.ORM
 {
-    class StationsOrm
+    public class StationsOrm
     {
         public List<Station> Stations { get; set; }
 
@@ -15,9 +16,18 @@ namespace TrainEngine.ORM
             Read();
         }
 
-        private void Read()
+        public StationsOrm Read()
         {
-            string[] line = File.ReadAllLines("Data/stations.txt");         
+            var jsonString = File.ReadAllText("Data/stations_test.json");
+            Stations = JsonSerializer.Deserialize<List<Station>>(jsonString);
+            return this;
+        }
+
+        public StationsOrm Write()
+        {
+            string jsonString = JsonSerializer.Serialize(Stations);
+            File.WriteAllText("Data/stations_test.json", jsonString);
+            return this;
         }
     }
 }

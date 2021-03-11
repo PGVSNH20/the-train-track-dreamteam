@@ -1,4 +1,5 @@
 ﻿using System;
+using TrainEngine.ORM;
 using TrainEngine.Tracks;
 
 namespace TrainConsole
@@ -18,6 +19,10 @@ namespace TrainConsole
             TrackLinkOrm track = new TrackLinkOrm();
 
             Console.WriteLine(track.TrackMap);
+
+            StationsOrm stations = new StationsOrm();
+            stations.Stations.Add(new Station() { 
+            });
         }
     }
 }
