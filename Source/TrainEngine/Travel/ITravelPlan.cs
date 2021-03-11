@@ -15,10 +15,10 @@ namespace TrainEngine.Travel
 
         ITravelPlan ArriveAt(int stationId, DateTime ariveTime);
 
-        ITravelPlan GeneratePlan(string path);
+        ITravelPlan GeneratePlan();
 
-        void Load(string path);
+        void Read();
 
-        void Save(string path);
+        void Write();
     }
 }

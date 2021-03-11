@@ -1,6 +1,7 @@
 ﻿using System;
 using TrainEngine.ORM;
 using TrainEngine.Tracks;
+using TrainEngine.Travel;
 
 namespace TrainConsole
 {
@@ -23,6 +24,8 @@ namespace TrainConsole
             StationsOrm stations = new StationsOrm();
 
             stations.Read();
+
+            ITravelPlan travelPlan = new TravelPlan(1).StartAt(1,new DateTime(2021,03,21,10,00,00));
 
             //stations.Write();
         }

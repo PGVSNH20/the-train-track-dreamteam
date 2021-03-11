@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Text.Json;
 using TrainEngine.Trains;
 
 namespace TrainEngine.Travel
 {
-    internal class TravelPlan : ITravelPlan
+    public class TravelPlan : ITravelPlan
     {
         public List<TripStop> TimeTable { get; set; }
 
@@ -37,20 +39,22 @@ namespace TrainEngine.Travel
             return this;
         }
 
-        public ITravelPlan GeneratePlan(string path)
+        public ITravelPlan GeneratePlan()
         {
+            Write();
             return this;
         }
 
-        public void Load(string path)
+        public void Read()
         {
             var jsonString = File.ReadAllText("Data/timetable.json");
             TimeTable = JsonSerializer.Deserialize<List<TripStop>>(jsonString);
         }
 
-        public void Save(string path)
+        public void Write()
         {
-            throw new NotImplementedException();
+            string jsonString = JsonSerializer.Serialize(TimeTable);
+            File.WriteAllText("Data/timetable.json", jsonString);
         }
 
     }
