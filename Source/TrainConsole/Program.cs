@@ -17,9 +17,11 @@ namespace TrainConsole
             // Parse the trains (Data/trains.txt)
 
             var trainTracks = new TrackORMAdv();
-            trainTracks.PrintTrackMap();
+            //trainTracks.PrintTrackMap();
 
-            var travelPlan = new TravelPlan(1).StartAt(1, "10:14").ArriveAt(2, "11:45");
+            var travelPlan = new TravelPlan().SettActualTrain(1).StartAt(1, "10:14").ArriveAt(2, "11:45");
+            travelPlan.SettActualTrain(2).StartAt(3, "10:14").ArriveAt(4, "11:45").ArriveAt(4, "12:35").ArriveAt(4, "12:59");
+            travelPlan.Simulate("10:00", 1000);
 
             // Step 2:
             // Make the trains run in treads
