@@ -16,14 +16,16 @@ namespace TrainEngine.Tracks
 
         public TrackORMAdv()
         {
-            SourceFile = @".Data\traintrack4.txt";
+            SourceFile = @"Data\traintrack4.txt";
             Read();
+            AddTracks();
         }
 
         public TrackORMAdv(string sourceFile)
         {
             SourceFile = sourceFile;
             Read();
+            AddTracks();
         }
 
         private void Read()
@@ -79,17 +81,17 @@ namespace TrainEngine.Tracks
             }
         }
 
-        public void AddLinks()
+        private void AddTracks()
         {
             var track = new Track();
             while (track.EndStation == null)
             {
-                char? scanResult = ScanNeighbours();
+                char? scanResult = FindNext();
 
-                if (IsLinkUnit(scanResult))
-                    track.NumberOfLinkParts++;
+                if (IsTrackPart(scanResult))
+                    track.NumberOfTrackParts++;
                 if (scanResult == '=')
-                    track.CrossingsAtUnit.Add(track.NumberOfLinkParts);
+                    track.CrossingsAtTrackPart.Add(track.NumberOfTrackParts);
 
                 while (track.StartStation == null)
                 {
@@ -97,11 +99,11 @@ namespace TrainEngine.Tracks
                 }
                 while (scanResult != null)
                 {
-                    scanResult = ScanNeighbours();
-                    if (IsLinkUnit(scanResult))
-                        track.NumberOfLinkParts++;
+                    scanResult = FindNext();
+                    if (IsTrackPart(scanResult))
+                        track.NumberOfTrackParts++;
                     if (scanResult == '=')
-                        track.CrossingsAtUnit.Add(track.NumberOfLinkParts);
+                        track.CrossingsAtTrackPart.Add(track.NumberOfTrackParts);
 
                     if (scanResult == '[')
                     {
@@ -110,24 +112,24 @@ namespace TrainEngine.Tracks
                         if (!track.EndStation.IsEndStation)
                         {
                             _currentPos = startPos;
-                            AddLinks();
+                            AddTracks();
                         }
                         break;
                     }
                     if (scanResult == '<')
                     {
-                        AddBranchLink(track);
+                        AddBranchTrack(track);
                     }
                 }
             }
             Tracks.Add(track);
         }
 
-        private void AddBranchLink(Track mainTrack)
+        private void AddBranchTrack(Track mainTrack)
         {
             var savedPrevPos = _prevPos;
             var savedCurrentPos = _currentPos;
-            ScanNeighbours();
+            FindNext();
             var ignorPos = _currentPos;
             _prevPos = savedCurrentPos;
             _currentPos = savedCurrentPos;
@@ -135,21 +137,21 @@ namespace TrainEngine.Tracks
             var branchTrack = new Track()
             {
                 StartStation = mainTrack.StartStation,
-                NumberOfLinkParts = mainTrack.NumberOfLinkParts + 1
+                NumberOfTrackParts = mainTrack.NumberOfTrackParts + 1
             };
-            foreach (var crossing in mainTrack.CrossingsAtUnit)
-                branchTrack.CrossingsAtUnit.Add(crossing);
+            foreach (var crossing in mainTrack.CrossingsAtTrackPart)
+                branchTrack.CrossingsAtTrackPart.Add(crossing);
 
             while (branchTrack.EndStation == null)
             {
-                char? scanResult2 = ScanNeighbours(ignorPos);
+                char? scanResult2 = FindNext(ignorPos);
                 while (scanResult2 != null)
                 {
-                    scanResult2 = ScanNeighbours();
-                    if (IsLinkUnit(scanResult2))
-                        branchTrack.NumberOfLinkParts++;
+                    scanResult2 = FindNext();
+                    if (IsTrackPart(scanResult2))
+                        branchTrack.NumberOfTrackParts++;
                     if (scanResult2 == '=')
-                        branchTrack.CrossingsAtUnit.Add(branchTrack.NumberOfLinkParts);
+                        branchTrack.CrossingsAtTrackPart.Add(branchTrack.NumberOfTrackParts);
 
                     if (scanResult2 == '[')
                     {
@@ -159,14 +161,14 @@ namespace TrainEngine.Tracks
                         if (!branchTrack.EndStation.IsEndStation)
                         {
                             _currentPos = startPos;
-                            AddLinks();
+                            AddTracks();
                         }
                         _currentPos = endPos;
                         break;
                     }
                     if (scanResult2 == '<')
                     {
-                        AddBranchLink(branchTrack);
+                        AddBranchTrack(branchTrack);
                     }
                 }
             }
@@ -175,7 +177,7 @@ namespace TrainEngine.Tracks
             _currentPos = savedCurrentPos;
         }
 
-        private bool IsLinkUnit(char? scanResult)
+        private bool IsTrackPart(char? scanResult)
         {
             if (scanResult == '-' ||
                 scanResult == '>' ||
@@ -193,12 +195,12 @@ namespace TrainEngine.Tracks
             string stationId = string.Empty;
             while (scanResult != ']')
             {
-                scanResult = ScanNeighbours();
+                scanResult = FindNext();
                 if (scanResult == ']')
                 {
                     var savedPrevPos = _prevPos;
                     var savedCurrentPos = _currentPos;
-                    scanResult = ScanNeighbours();
+                    scanResult = FindNext();
                     if (scanResult == null)
                     {
                         station.IsEndStation = true;
@@ -224,7 +226,7 @@ namespace TrainEngine.Tracks
 
             while (scanResult != ']')
             {
-                scanResult = ScanNeighbours();
+                scanResult = FindNext();
                 if (scanResult == ']')
                     break;
                 stationId += scanResult.ToString();
@@ -233,7 +235,7 @@ namespace TrainEngine.Tracks
             return station;
         }
 
-        private char? ScanNeighbours((int x, int y)? ignorPosition = null)
+        private char? FindNext((int x, int y)? ignorPosition = null)
         {
             (int x, int y) pOld = _prevPos;
             (int x, int y) p = _currentPos;
@@ -252,7 +254,9 @@ namespace TrainEngine.Tracks
             char? returnValue;
 
             foreach (var neighbor in neighbors)
-                if (NeighbourExists(neighbor))
+                if (IgnoreThis(neighbor))
+                    continue;
+                else
                 {
                     returnValue = CheckReturnValue(neighbor);
                     if (returnValue != ' ' && returnValue != null)
@@ -270,7 +274,7 @@ namespace TrainEngine.Tracks
                 return null;
             }
 
-            bool NeighbourExists((int x, int y) p)
+            bool IgnoreThis((int x, int y) p)
             {
                 if (p.x >= 0 &&
                     p.x < maxX &&
@@ -278,8 +282,8 @@ namespace TrainEngine.Tracks
                     p.y < maxY &&
                     p != pOld &&
                     p != ignorPosition)
-                    return true;
-                return false;
+                    return false;
+                return true;
             }
         }
     }

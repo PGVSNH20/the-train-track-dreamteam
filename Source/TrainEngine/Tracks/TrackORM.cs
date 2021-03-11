@@ -45,7 +45,7 @@ namespace TrainEngine.Tracks
                         link.EndStation = node;
                 }
                 if (symbol == '-')
-                    link.NumberOfLinkParts++;
+                    link.NumberOfTrackParts++;
             }
             Tracks.Add(link);
         }

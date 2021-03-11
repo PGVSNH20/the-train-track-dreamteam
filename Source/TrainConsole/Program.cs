@@ -16,10 +16,14 @@ namespace TrainConsole
             // Parse the traintrack (Data/traintrack.txt) using ORM (see suggested code)
             // Parse the trains (Data/trains.txt)
 
+            var trainTracks = new TrackORMAdv();
+            trainTracks.PrintTrackMap();
+
             // Step 2:
             // Make the trains run in treads
 
             //stations.Write();
+            Console.ReadKey();
         }
     }
 }
