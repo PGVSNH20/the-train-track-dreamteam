@@ -11,15 +11,23 @@ namespace TrainEngine.TrainTrack
         private char[,] _trainTrackMap;
         private (int x, int y) _prevPos = (0, 0);
         private (int x, int y) _currentPos = (0, 0);
+        public string SourceFile { get; set; }
 
         public TrackLinkOrm()
         {
+            SourceFile = @".Data\traintrack4.txt";
+            Read();
+        }
+
+        public TrackLinkOrm(string sourceFile)
+        {
+            SourceFile = sourceFile;
             Read();
         }
 
         private void Read()
         {
-            string[] dataString = File.ReadAllLines(@"Data\traintrack4.txt");
+            string[] dataString = File.ReadAllLines(SourceFile);
             int longestLineLength = 0;
             foreach (string line in dataString)
                 if (line.Length > longestLineLength)
