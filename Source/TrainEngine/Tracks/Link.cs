@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TrainEngine.Tracks
 {
-    class Link
+    public class Link
     {
         public ILinkNode StartNode { get; set; }
         public ILinkNode EndNode { get; set; }

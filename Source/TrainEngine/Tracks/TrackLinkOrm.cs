@@ -8,7 +8,7 @@ namespace TrainEngine.Tracks
     public class TrackLinkOrm
     {
         public char[] TrackMap { get; set; }
-
+        public List<Link> Links { get; set; }
         public TrackLinkOrm()
         {
             Read();
@@ -19,7 +19,7 @@ namespace TrainEngine.Tracks
             TrackMap = new char[line[0].Length];
             for (var i = 0; i < TrackMap.Length; i++)
             {
-                TrackMap[i] = Convert.ToChar(line[i]);
+                TrackMap[i] = Convert.ToChar(line[0][i]);
             }
         }
     }
