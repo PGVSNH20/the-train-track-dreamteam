@@ -22,41 +22,47 @@ namespace TrainEngine.Travel
             Train = train;
         }
 
-        public ITravelPlan StartAt(int stationId, DateTime departureTime)
+        public ITravelPlan StartAt(int stationId, string departureTime)
         {
             var tripStop = new TripStop();
             tripStop.StationId = stationId;
+            tripStop.DepartureTime = TimeSpan.Parse(departureTime);
+            tripStop.TrainId = Train.Id;
+            TimeTable.Add(tripStop);
+            return this;
+        }
+
+        public ITravelPlan ArriveAt(int stationId, string ariveTime)
+        {
+            var tripStop = new TripStop();
+            tripStop.StationId = stationId;
+            tripStop.ArrivalTime = TimeSpan.Parse(ariveTime);
+            TimeSpan? departureTime = tripStop.ArrivalTime + TimeSpan.Parse("0:05");
             tripStop.DepartureTime = departureTime;
             tripStop.TrainId = Train.Id;
             TimeTable.Add(tripStop);
             return this;
         }
 
-        public ITravelPlan ArriveAt(int stationId, DateTime ariveTime)
+        public ITravelPlan GeneratePlan(string fileName = "timetable")
         {
-            var tripStop = new TripStop();
-            tripStop.StationId = stationId;
-            tripStop.ArrivalTime = ariveTime;
-            DateTime departureTime = ariveTime.AddMinutes(5);
-            tripStop.DepartureTime = departureTime;
-            tripStop.TrainId = Train.Id;
-            TimeTable.Add(tripStop);
+            Write(fileName);
             return this;
         }
 
-        public ITravelPlan GeneratePlan()
+        public ITravelPlan LoadPlan(string fileName = "timetable")
         {
-            Write();
+            Read(fileName);
             return this;
         }
 
-        public void Read()
+        private void Read(string fileName)
         {
-            var jsonString = File.ReadAllText("Data/timetable.json");
+            var jsonString = File.ReadAllText($"Data/{fileName}.json");
             TimeTable = JsonSerializer.Deserialize<List<TripStop>>(jsonString);
         }
 
-        public void Write()
+        private void Write(string fileName)
         {
             var options = new JsonSerializerOptions
             {
@@ -64,7 +70,11 @@ namespace TrainEngine.Travel
                 WriteIndented = true
             };
             string jsonString = JsonSerializer.Serialize(TimeTable, options);
-            File.WriteAllText("Data/timetable.json", jsonString);
+            File.WriteAllText($"Data/{fileName}.json", jsonString);
+        }
+
+        public void Simulate(DateTime fakeClock)
+        {
         }
     }
 }

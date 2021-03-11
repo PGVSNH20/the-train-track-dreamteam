@@ -19,6 +19,8 @@ namespace TrainConsole
             var trainTracks = new TrackORMAdv();
             trainTracks.PrintTrackMap();
 
+            var travelPlan = new TravelPlan(1).StartAt(1, "10:14").ArriveAt(2, "11:45");
+
             // Step 2:
             // Make the trains run in treads
 

@@ -11,14 +11,12 @@ namespace TrainEngine.Travel
 
         Train Train { get; }
 
-        ITravelPlan StartAt(int stationId, DateTime departureTime);
+        ITravelPlan StartAt(int stationId, string departureTime);
 
-        ITravelPlan ArriveAt(int stationId, DateTime ariveTime);
+        ITravelPlan ArriveAt(int stationId, string ariveTime);
 
-        ITravelPlan GeneratePlan();
+        ITravelPlan GeneratePlan(string fileName);
 
-        void Read();
-
-        void Write();
+        ITravelPlan LoadPlan(string fileName);
     }
 }
