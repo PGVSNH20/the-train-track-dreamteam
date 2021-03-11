@@ -1,0 +1,10 @@
+[{
+        "Id": 1,
+        "StationName": "Gävle",
+        "IsEndstation": false
+    }, {
+        "Id": 2,
+        "StationName": "Sundval",
+        "IsEndstation": false
+    }
+]

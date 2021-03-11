@@ -21,8 +21,10 @@ namespace TrainConsole
             Console.WriteLine(track.TrackMap);
 
             StationsOrm stations = new StationsOrm();
-            stations.Stations.Add(new Station() { 
-            });
+
+            stations.Read();
+
+            //stations.Write();
         }
     }
 }
