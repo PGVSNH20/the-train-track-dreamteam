@@ -25,7 +25,11 @@ namespace TrainConsole
 
             stations.Read();
 
-            ITravelPlan travelPlan = new TravelPlan(1).StartAt(1,new DateTime(2021,03,21,10,00,00));
+            ITravelPlan travelPlan = new TravelPlan(1)
+                .StartAt(1, new DateTime(2021, 03, 21, 10, 00, 00))
+                .ArriveAt(2, new DateTime(2021, 03, 21, 11, 00, 00))
+                .ArriveAt(3, new DateTime(2021, 03, 21, 11, 00, 00))
+                .GeneratePlan();
 
             //stations.Write();
         }

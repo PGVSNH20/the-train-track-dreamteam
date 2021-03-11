@@ -15,6 +15,7 @@ namespace TrainEngine.Travel
 
         public TravelPlan(int trainId)
         {
+            TimeTable = new List<TripStop>();
             var train = new Train(trainId);
             Train = train;
         }
@@ -25,6 +26,7 @@ namespace TrainEngine.Travel
             tripStop.StationId = stationId;
             tripStop.DepartureTime = departureTime;
             tripStop.TrainId = Train.Id;
+            TimeTable.Add(tripStop);
             return this;
         }
 
@@ -36,6 +38,7 @@ namespace TrainEngine.Travel
             DateTime departureTime = ariveTime.AddMinutes(5);
             tripStop.DepartureTime = departureTime;
             tripStop.TrainId = Train.Id;
+            TimeTable.Add(tripStop);
             return this;
         }
 
@@ -56,6 +59,5 @@ namespace TrainEngine.Travel
             string jsonString = JsonSerializer.Serialize(TimeTable);
             File.WriteAllText("Data/timetable.json", jsonString);
         }
-
     }
 }
