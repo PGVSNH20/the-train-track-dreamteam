@@ -1,6 +1,6 @@
 ﻿namespace TrainEngine.TrainTrack
 {
-    public class Station
+    public class Station : ILinkNode
     {
         public int Id { set; get; }
         public string Name { set; get; }

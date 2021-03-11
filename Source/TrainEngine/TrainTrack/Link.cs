@@ -6,8 +6,8 @@ namespace TrainEngine.TrainTrack
 {
     public class Link
     {
-        public Station StartStation { set; get; }
-        public Station EndStation { set; get; }
+        public ILinkNode StartNode { set; get; }
+        public ILinkNode EndNode { set; get; }
         public int LinkUnitsCount { set; get; }
         public List<int> CrossingsAtUnit { set; get; }
 
@@ -22,9 +22,9 @@ namespace TrainEngine.TrainTrack
             if (CrossingsAtUnit != null && CrossingsAtUnit.Count > 0)
             {
                 string crossings = $"has {CrossingsAtUnit.Count} crossings";
-                return ($"Track from {StartStation.Id} to {EndStation.Id} is {LinkUnitsCount} units long and {crossings}");
+                return ($"Track from {StartNode.Id} to {EndNode.Id} is {LinkUnitsCount} units long and {crossings}");
             }
-            return ($"Track from {StartStation.Id} to {EndStation.Id} is {LinkUnitsCount} units long");
+            return ($"Track from {StartNode.Id} to {EndNode.Id} is {LinkUnitsCount} units long");
         }
     }
 }

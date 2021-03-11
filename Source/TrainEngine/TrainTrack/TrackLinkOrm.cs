@@ -1,32 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace TrainEngine.TrainTrack
 {
-    public class TrackLinkService
+    public class TrackLinkOrm
     {
         public List<Link> Links { get; } = new List<Link>();
         private char[,] _trainTrackMap;
         private (int x, int y) _prevPos = (0, 0);
         private (int x, int y) _currentPos = (0, 0);
 
-        public TrackLinkService(string[] fileLines)
+        public TrackLinkOrm()
         {
+            Read();
+        }
+
+        private void Read()
+        {
+            string[] dataString = File.ReadAllLines(@"Data\traintrack4.txt");
             int longestLineLength = 0;
-            foreach (string line in fileLines)
+            foreach (string line in dataString)
                 if (line.Length > longestLineLength)
                     longestLineLength = line.Length;
 
-            _trainTrackMap = new char[fileLines.Length, longestLineLength];
+            _trainTrackMap = new char[dataString.Length, longestLineLength];
             for (var i = 0; i < _trainTrackMap.GetLength(0); i++)
                 for (var n = 0; n < _trainTrackMap.GetLength(1); n++)
                     _trainTrackMap[i, n] = ' ';
 
-            for (int x = 0; x < fileLines.Length; x++)
+            for (int x = 0; x < dataString.Length; x++)
             {
-                string line = fileLines[x];
-                for (int y = 0; y < fileLines[x].Length; y++)
+                string line = dataString[x];
+                for (int y = 0; y < dataString[x].Length; y++)
                 {
                     if (line[y] == '*') { _currentPos.x = x; _currentPos.y = y; }
                     _trainTrackMap[x, y] = line[y];
@@ -66,7 +73,7 @@ namespace TrainEngine.TrainTrack
         public void AddLinks()
         {
             var link = new Link();
-            while (link.EndStation == null)
+            while (link.EndNode == null)
             {
                 char? scanResult = ScanNeighbours();
 
@@ -75,9 +82,9 @@ namespace TrainEngine.TrainTrack
                 if (scanResult == '=')
                     link.CrossingsAtUnit.Add(link.LinkUnitsCount);
 
-                while (link.StartStation == null)
+                while (link.StartNode == null)
                 {
-                    link.StartStation = AddStartStation(scanResult);
+                    link.StartNode = AddStartStation(scanResult);
                 }
                 while (scanResult != null)
                 {
@@ -90,8 +97,8 @@ namespace TrainEngine.TrainTrack
                     if (scanResult == '[')
                     {
                         var startPos = _prevPos;
-                        link.EndStation = AddEndStation(scanResult);
-                        if (!link.EndStation.IsLastStation)
+                        link.EndNode = AddEndStation(scanResult);
+                        if (!link.EndNode.IsLastStation)
                         {
                             _currentPos = startPos;
                             AddLinks();
@@ -118,13 +125,13 @@ namespace TrainEngine.TrainTrack
 
             var branchLink = new Link()
             {
-                StartStation = mainLink.StartStation,
+                StartNode = mainLink.StartNode,
                 LinkUnitsCount = mainLink.LinkUnitsCount + 1
             };
             foreach (var crossing in mainLink.CrossingsAtUnit)
                 branchLink.CrossingsAtUnit.Add(crossing);
 
-            while (branchLink.EndStation == null)
+            while (branchLink.EndNode == null)
             {
                 char? scanResult2 = ScanNeighbours(ignorPos);
                 while (scanResult2 != null)
@@ -139,8 +146,8 @@ namespace TrainEngine.TrainTrack
                     {
                         var startPos = _prevPos;
                         var endPos = _currentPos;
-                        branchLink.EndStation = AddEndStation(scanResult2);
-                        if (!branchLink.EndStation.IsLastStation)
+                        branchLink.EndNode = AddEndStation(scanResult2);
+                        if (!branchLink.EndNode.IsLastStation)
                         {
                             _currentPos = startPos;
                             AddLinks();
