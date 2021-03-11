@@ -22,5 +22,17 @@ namespace TrainEngine.Tracks
                 TrackMap[i] = Convert.ToChar(line[0][i]);
             }
         }
+
+        public void CreateLinks()
+        {
+            Link link = new Link();
+            foreach (char symbol in TrackMap)
+            {
+                if (symbol > '0' && symbol < '9')
+                {
+                    link.StartNode = Convert.ToInt32(symbol);
+                }
+            }
+        }
     }
 }
