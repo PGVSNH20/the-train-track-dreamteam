@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using TrainEngine.Trains;
 
 namespace TrainEngine.Travel
@@ -56,7 +58,12 @@ namespace TrainEngine.Travel
 
         public void Write()
         {
-            string jsonString = JsonSerializer.Serialize(TimeTable);
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
+                WriteIndented = true
+            };
+            string jsonString = JsonSerializer.Serialize(TimeTable, options);
             File.WriteAllText("Data/timetable.json", jsonString);
         }
     }

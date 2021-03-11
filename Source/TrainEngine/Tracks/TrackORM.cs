@@ -5,16 +5,16 @@ using System.Text;
 
 namespace TrainEngine.Tracks
 {
-    public class TrackLinkOrm
+    public class TrackORM
     {
         public char[] TrackMap { get; set; }
-        public List<Link> Links { get; set; }
+        public List<Track> Tracks { get; set; }
 
-        public TrackLinkOrm()
+        public TrackORM()
         {
             Read();
-            Links = new List<Link>();
-            CreateLinks();
+            Tracks = new List<Track>();
+            CreateTracks();
         }
 
         private void Read()
@@ -27,27 +27,27 @@ namespace TrainEngine.Tracks
             }
         }
 
-        private void CreateLinks()
+        private void CreateTracks()
         {
-            Link link = new Link();
+            Track link = new Track();
 
             foreach (char symbol in TrackMap)
             {
                 if (symbol > 47 && symbol < 59)
                 {
-                    ILinkNode node = new Station();
+                    Station node = new Station();
                     double number = char.GetNumericValue(symbol);
                     node.Id = Convert.ToInt32(number);
 
-                    if (link.StartNode == null)
-                        link.StartNode = node;
+                    if (link.StartStation == null)
+                        link.StartStation = node;
                     else
-                        link.EndNode = node;
+                        link.EndStation = node;
                 }
                 if (symbol == '-')
                     link.NumberOfLinkParts++;
             }
-            Links.Add(link);
+            Tracks.Add(link);
         }
     }
 }

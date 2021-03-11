@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 
 namespace TrainEngine.Trains
 {
@@ -23,7 +25,12 @@ namespace TrainEngine.Trains
 
         public void Write()
         {
-            string jsonString = JsonSerializer.Serialize(TrainsList);
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
+                WriteIndented = true
+            };
+            string jsonString = JsonSerializer.Serialize(TrainsList, options);
             File.WriteAllText("Data/trains.json", jsonString);
         }
     }

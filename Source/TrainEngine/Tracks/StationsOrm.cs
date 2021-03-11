@@ -4,28 +4,35 @@ using System.Text;
 using TrainEngine.Tracks;
 using System.IO;
 using System.Text.Json;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace TrainEngine.ORM
 {
-    public class StationsOrm
+    public class StationsORM
     {
         public List<Station> Stations { get; set; }
 
-        public StationsOrm()
+        public StationsORM()
         {
             Read();
         }
 
-        public StationsOrm Read()
+        public StationsORM Read()
         {
             var jsonString = File.ReadAllText("Data/stations.json");
             Stations = JsonSerializer.Deserialize<List<Station>>(jsonString);
             return this;
         }
 
-        public StationsOrm Write()
+        public StationsORM Write()
         {
-            string jsonString = JsonSerializer.Serialize(Stations);
+            var options = new JsonSerializerOptions
+            {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
+                WriteIndented = true
+            };
+            string jsonString = JsonSerializer.Serialize(Stations, options);
             File.WriteAllText("Data/stations.json", jsonString);
             return this;
         }

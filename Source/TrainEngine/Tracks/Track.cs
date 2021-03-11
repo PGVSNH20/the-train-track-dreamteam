@@ -4,10 +4,10 @@ using System.Text;
 
 namespace TrainEngine.Tracks
 {
-    public class Link
+    public class Track
     {
-        public ILinkNode StartNode { get; set; }
-        public ILinkNode EndNode { get; set; }
+        public Station StartStation { get; set; }
+        public Station EndStation { get; set; }
         public int NumberOfLinkParts { get; set; }
     }
 }
