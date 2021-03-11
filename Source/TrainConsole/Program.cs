@@ -30,6 +30,8 @@ namespace TrainConsole
                 CurrentDestination = "",
                 IsAtStation = false });
 
+            train.Write();
+
             TrackLinkOrm track = new TrackLinkOrm();
 
             Console.WriteLine(track.TrackMap);

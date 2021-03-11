@@ -19,7 +19,7 @@ namespace TrainEngine.Tracks
 
         private void Read()
         {
-            string[] line = File.ReadAllLines("Data/traintrack1.txt");
+            string[] line = File.ReadAllLines("Data/traintrack2.txt");
             TrackMap = new char[line[0].Length];
             for (var i = 0; i < TrackMap.Length; i++)
             {
@@ -30,6 +30,7 @@ namespace TrainEngine.Tracks
         private void CreateLinks()
         {
             Link link = new Link();
+
             foreach (char symbol in TrackMap)
             {
                 if (symbol > 47 && symbol < 59)
