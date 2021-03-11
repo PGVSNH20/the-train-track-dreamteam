@@ -44,7 +44,8 @@ namespace TrainEngine.Travel
 
         public void Load(string path)
         {
-            throw new NotImplementedException();
+            var jsonString = File.ReadAllText("Data/timetable.json");
+            TimeTable = JsonSerializer.Deserialize<List<TripStop>>(jsonString);
         }
 
         public void Save(string path)

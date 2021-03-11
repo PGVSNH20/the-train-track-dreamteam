@@ -18,7 +18,7 @@ namespace TrainEngine.ORM
 
         public StationsOrm Read()
         {
-            var jsonString = File.ReadAllText("Data/stations_test.json");
+            var jsonString = File.ReadAllText("Data/stations.json");
             Stations = JsonSerializer.Deserialize<List<Station>>(jsonString);
             return this;
         }
@@ -26,7 +26,7 @@ namespace TrainEngine.ORM
         public StationsOrm Write()
         {
             string jsonString = JsonSerializer.Serialize(Stations);
-            File.WriteAllText("Data/stations_test.json", jsonString);
+            File.WriteAllText("Data/stations.json", jsonString);
             return this;
         }
     }
