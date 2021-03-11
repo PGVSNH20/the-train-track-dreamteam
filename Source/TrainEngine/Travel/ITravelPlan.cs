@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TrainEngine.Trains;
 
 namespace TrainEngine.Travel
 {
     public interface ITravelPlan
     {
-        List<object> TimeTable { get; }
+        List<TripStop> TimeTable { get; }
 
-        object Train { get; }
+        Train Train { get; }
 
         void Save(string path);
         void Load(string path);

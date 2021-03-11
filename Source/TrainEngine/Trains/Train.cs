@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TrainEngine.Trains
 {
-    internal class Train : ITrain, ITrainPosition
+    public class Train : ITrain, ITrainPosition
     {
         public int Id { get; set; }
         public string Name { get; set; }

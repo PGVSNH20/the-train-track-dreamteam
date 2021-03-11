@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TrainEngine.Trains;
 
 namespace TrainEngine.Travel
 {
     class TravelPlan : ITravelPlan
     {
-        public List<TripStop> TimeTable => throw new NotImplementedException();
+        public List<TripStop> TimeTable { get; set; }
 
-        public object Train => throw new NotImplementedException();
+         public Train Train { get; set; }
 
         public void Load(string path)
         {
