@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using TrainEngine.Tracks;
 
 namespace TrainConsole
 {
@@ -15,8 +15,8 @@ namespace TrainConsole
             // Step 2:
             // Make the trains run in treads
 
-            string[] line = File.ReadAllLines("Data/traintrack1.txt");
-            Console.WriteLine(line[0]);
+            TrackLinkOrm track = new TrackLinkOrm();
+            Console.WriteLine(track.TrackMap);
 
 
         }

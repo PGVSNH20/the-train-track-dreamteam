@@ -6,9 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="Data\traintrack1.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\TrainEngine\TrainEngine.csproj" />
   </ItemGroup>
 
 </Project>
