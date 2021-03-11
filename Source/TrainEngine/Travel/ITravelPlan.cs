@@ -11,8 +11,14 @@ namespace TrainEngine.Travel
 
         Train Train { get; }
 
-        void Save(string path);
+        ITravelPlan StartAt(int stationId, DateTime departureTime);
+
+        ITravelPlan ArriveAt(int stationId, DateTime ariveTime);
+
+        ITravelPlan GeneratePlan(string path);
+
         void Load(string path);
 
+        void Save(string path);
     }
 }
