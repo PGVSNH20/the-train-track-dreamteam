@@ -30,12 +30,13 @@ namespace TrainEngine.Tracks
         private void CreateLinks()
         {
             Link link = new Link();
-            ILinkNode node = new Station();
             foreach (char symbol in TrackMap)
             {
                 if (symbol > 47 && symbol < 59)
                 {
-                    node.Id = Convert.ToInt32(symbol);
+                    ILinkNode node = new Station();
+                    double number = char.GetNumericValue(symbol);
+                    node.Id = Convert.ToInt32(number);
 
                     if (link.StartNode == null)
                         link.StartNode = node;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TrainEngine
+namespace TrainEngine.Travel
 {
     public interface ITravelPlan
     {
