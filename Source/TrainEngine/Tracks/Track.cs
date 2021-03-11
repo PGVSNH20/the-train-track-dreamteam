@@ -9,5 +9,6 @@ namespace TrainEngine.Tracks
         public Station StartStation { get; set; }
         public Station EndStation { get; set; }
         public int NumberOfLinkParts { get; set; }
+        public List<int> CrossingsAtUnit { set; get; }
     }
 }

@@ -8,6 +8,6 @@ namespace TrainEngine.Tracks
     {
         public int Id { set; get; }
         public string StationName { set; get; }
-        public bool IsEndstation { set; get; }
+        public bool IsEndStation { set; get; }
     }
 }
