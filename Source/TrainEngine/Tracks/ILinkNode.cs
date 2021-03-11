@@ -2,6 +2,6 @@
 {
     public interface ILinkNode
     {
-        public int ID { get; }
+        public int Id { get; set; }
     }
 }

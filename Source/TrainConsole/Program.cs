@@ -3,9 +3,9 @@ using TrainEngine.Tracks;
 
 namespace TrainConsole
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.WriteLine("Train track!");
             // Step 1:
@@ -16,9 +16,8 @@ namespace TrainConsole
             // Make the trains run in treads
 
             TrackLinkOrm track = new TrackLinkOrm();
+
             Console.WriteLine(track.TrackMap);
-
-
         }
     }
 }
