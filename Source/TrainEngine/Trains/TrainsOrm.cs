@@ -6,11 +6,11 @@ using System.Text.Json;
 
 namespace TrainEngine.Trains
 {
-    internal class Trains
+    public class TrainsOrm
     {
         public List<Train> TrainsList { get; set; }
 
-        public Trains()
+        public TrainsOrm()
         {
             TrainsList = new List<Train>();
         }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using TrainEngine.ORM;
 using TrainEngine.Tracks;
+using TrainEngine.Trains;
 using TrainEngine.Travel;
 
 namespace TrainConsole
@@ -16,6 +18,17 @@ namespace TrainConsole
 
             // Step 2:
             // Make the trains run in treads
+            TrainsOrm train = new TrainsOrm();
+
+            train.TrainsList.Add(new Train(0) {
+                Name = "Loket",
+                MaxSpeed = 100,
+                Operated = true,
+                CurrentPassangers = new List<Passanger>(),
+                MaxPassengersCount = 15,
+                IsMoving = false,
+                CurrentDestination = "",
+                IsAtStation = false });
 
             TrackLinkOrm track = new TrackLinkOrm();
 
