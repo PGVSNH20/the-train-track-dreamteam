@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+using TrainEngine.Trains;
 
 namespace TrainEngine.Tracks
 {
@@ -29,7 +30,7 @@ namespace TrainEngine.Tracks
 
         private void CreateTracks()
         {
-            Track link = new Track();
+            Track track = new Track();
 
             foreach (char symbol in TrackMap)
             {
@@ -39,15 +40,17 @@ namespace TrainEngine.Tracks
                     double number = char.GetNumericValue(symbol);
                     node.Id = Convert.ToInt32(number);
 
-                    if (link.StartStation == null)
-                        link.StartStation = node;
+                    if (track.StartStation == null)
+                        track.StartStation = node;
                     else
-                        link.EndStation = node;
+                        track.EndStation = node;
                 }
                 if (symbol == '-')
-                    link.NumberOfTrackParts++;
+                    track.NumberOfTrackParts++;
             }
-            Tracks.Add(link);
+            Tracks.Add(track);
         }
+
+ 
     }
 }

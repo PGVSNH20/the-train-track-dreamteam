@@ -17,6 +17,8 @@ namespace TrainEngine.Trains
         public string CurrentDestination { get; set; }
         public bool IsAtStation { get; set; }
 
+        public Train() { }
+
         public Train(int id)
         {
             Id = id;

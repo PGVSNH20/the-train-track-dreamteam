@@ -10,17 +10,27 @@ namespace TrainEngine.Trains
 {
     public class TrainsOrm
     {
-        public List<Train> TrainsList { get; set; }
+        public List<Train> Trains { get; set; }
+        public string SourceFile { get; set; }
 
         public TrainsOrm()
         {
-            TrainsList = new List<Train>();
+            SourceFile = @"Data\trains.json";
+            Trains = new List<Train>();
+            Read();
+        }
+
+        public TrainsOrm(string sourceFile)
+        {
+            SourceFile = sourceFile;
+            Trains = new List<Train>();
+            Read();
         }
 
         public void Read()
         {
-            var jsonString = File.ReadAllText("Data/trains.json");
-            TrainsList = JsonSerializer.Deserialize<List<Train>>(jsonString);
+            var jsonString = File.ReadAllText(SourceFile);
+            Trains = JsonSerializer.Deserialize<List<Train>>(jsonString);
         }
 
         public void Write()
@@ -30,8 +40,12 @@ namespace TrainEngine.Trains
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
                 WriteIndented = true
             };
-            string jsonString = JsonSerializer.Serialize(TrainsList, options);
-            File.WriteAllText("Data/trains.json", jsonString);
+            string jsonString = JsonSerializer.Serialize(Trains, options);
+            File.WriteAllText(SourceFile, jsonString);
+        }
+        public Train GetTrainById(int traindId)
+        {
+            return Trains.Find(t => t.Id == traindId);
         }
     }
 }

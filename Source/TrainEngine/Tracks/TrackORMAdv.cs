@@ -2,6 +2,8 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+using TrainEngine.Trains;
+using System.Linq;
 
 namespace TrainEngine.Tracks
 {
@@ -285,6 +287,48 @@ namespace TrainEngine.Tracks
                     return false;
                 return true;
             }
+        }
+
+        public void GetMinTravelTime(int trainId, int startStationId, int endStationId)
+        {
+            List<Track> tripTracks = new List<Track>();
+            
+            tripTracks = FindTripTracks(startStationId, endStationId);
+
+            var trains = new TrainsOrm();
+            var train = trains.GetTrainById(trainId);
+            double tripLengh = tripTracks.Sum(t => t.NumberOfTrackParts) * 10;
+            double hours = tripLengh / train.MaxSpeed;
+            var minTravelTime = TimeSpan.FromHours(hours);
+
+            foreach (Track tmpTrack in tripTracks) Console.WriteLine(tmpTrack.ToString());
+
+            Console.WriteLine($"travel time {minTravelTime}");
+
+
+        }
+        private List<Track> FindTripTracks(int startStationId, int endStationId)
+        {
+            List<Track> currentTracks = Tracks.FindAll(t => t.StartStation.Id == startStationId);
+            foreach (Track currentTrack in currentTracks)
+            {
+                var tripTracks = new List<Track>();
+                tripTracks.Add(currentTrack);
+                if (currentTrack.EndStation.Id == endStationId)
+                {
+                    return tripTracks;
+                }
+                else
+                {
+                    var tmpResult = FindTripTracks(currentTrack.EndStation.Id, endStationId);
+                    if (tmpResult != null)
+                    {
+                        tripTracks.AddRange(tmpResult);
+                        return tripTracks;
+                    }
+                }
+            }
+            return null;
         }
     }
 }

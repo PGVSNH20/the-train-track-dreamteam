@@ -1,20 +1,50 @@
 [
   {
-    "TrainId": 1,
-    "StationId": 1,
-    "DepartureTime": "2021-03-21T10:00:00",
+    "TrainId": 2,
+    "StationId": 3,
+    "DepartureTime": {
+      "Ticks": 397800000000,
+      "Days": 0,
+      "Hours": 11,
+      "Milliseconds": 0,
+      "Minutes": 3,
+      "Seconds": 0,
+      "TotalDays": 0.46041666666666664,
+      "TotalHours": 11.05,
+      "TotalMilliseconds": 39780000,
+      "TotalMinutes": 663,
+      "TotalSeconds": 39780
+    },
     "ArrivalTime": null
   },
   {
-    "TrainId": 1,
-    "StationId": 2,
-    "DepartureTime": "2021-03-21T11:05:00",
-    "ArrivalTime": "2021-03-21T11:00:00"
-  },
-  {
-    "TrainId": 1,
-    "StationId": 3,
-    "DepartureTime": "2021-03-21T11:05:00",
-    "ArrivalTime": "2021-03-21T11:00:00"
+    "TrainId": 2,
+    "StationId": 5,
+    "DepartureTime": {
+      "Ticks": 435000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 5,
+      "Seconds": 0,
+      "TotalDays": 0.5034722222222222,
+      "TotalHours": 12.083333333333334,
+      "TotalMilliseconds": 43500000,
+      "TotalMinutes": 725,
+      "TotalSeconds": 43500
+    },
+    "ArrivalTime": {
+      "Ticks": 432000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 0,
+      "Seconds": 0,
+      "TotalDays": 0.5,
+      "TotalHours": 12,
+      "TotalMilliseconds": 43200000,
+      "TotalMinutes": 720,
+      "TotalSeconds": 43200
+    }
   }
 ]
