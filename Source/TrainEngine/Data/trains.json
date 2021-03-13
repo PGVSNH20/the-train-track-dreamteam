@@ -1,0 +1,49 @@
+[
+  {
+    "Id": 1,
+    "Name": "Snabbtåg",
+    "MaxSpeed": 250,
+    "Operated": true,
+    "CurrentPassangers": null,
+    "MaxPassengersCount": 160,
+    "IsMoving": false,
+    "CurrentDestination": "",
+    "IsAtStation": false
+  },
+
+  {
+    "Id": 2,
+    "Name": "Snabbtåg",
+    "MaxSpeed": 250,
+    "Operated": true,
+    "CurrentPassangers": null,
+    "MaxPassengersCount": 160,
+    "IsMoving": false,
+    "CurrentDestination": "",
+    "IsAtStation": false
+  },
+
+  {
+    "Id": 3,
+    "Name": "Nattåg",
+    "MaxSpeed": 120,
+    "Operated": true,
+    "CurrentPassangers": [],
+    "MaxPassengersCount": 200,
+    "IsMoving": false,
+    "CurrentDestination": "",
+    "IsAtStation": false
+  },
+
+  {
+    "Id": 2,
+    "Name": "Snabbtåg",
+    "MaxSpeed": 120,
+    "Operated": false,
+    "CurrentPassangers": null,
+    "MaxPassengersCount": 0,
+    "IsMoving": false,
+    "CurrentDestination": null,
+    "IsAtStation": false
+  }
+]

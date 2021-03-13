@@ -10,7 +10,11 @@ namespace TrainEngine.Trains
         string Name { set; }
         int MaxSpeed { set; }
         bool Operated { set; }
-        TrainPosition Position { set; }
+        int MaxPassengersCount { set; }
         List<Passanger> CurrentPassangers { set; }
+
+        void UpdatePassengers(List<Passanger> GettingOnPassengers, List<Passanger> GettingOffPassengers);
+
+        void UpdateTrainPosition(ITrainPosition trainPosition);
     }
 }
