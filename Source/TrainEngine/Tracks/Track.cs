@@ -10,19 +10,27 @@ namespace TrainEngine.Tracks
         public Station EndStation { get; set; }
         public int NumberOfTrackParts { get; set; }
         public List<int> CrossingsAtTrackPart { set; get; }
+        public List<RailroudSwitch> SwitchesAtTrackPart { set; get; }
+        public List<Link> TrackLinks { set; get; }
 
         public Track()
         {
             CrossingsAtTrackPart = new List<int>();
+            SwitchesAtTrackPart = new List<RailroudSwitch>();
         }
         public override string ToString()
         {
+            var crossings = string.Empty;
+            var switches = string.Empty;
             if (CrossingsAtTrackPart != null && CrossingsAtTrackPart.Count > 0)
             {
-                string crossings = $"has {CrossingsAtTrackPart.Count} crossings";
-                return ($"Track from {StartStation.Id} to {EndStation.Id} is {NumberOfTrackParts} units long and {crossings}");
+                crossings = $"and has {CrossingsAtTrackPart.Count} crossings";
             }
-            return ($"Track from {StartStation.Id} to {EndStation.Id} is {NumberOfTrackParts} units long");
+            if (SwitchesAtTrackPart != null && SwitchesAtTrackPart.Count > 0)
+            {
+                switches = $"and has {SwitchesAtTrackPart.Count} Railroad switches";
+            }
+            return ($"Track from {StartStation.Id} to {EndStation.Id} is {NumberOfTrackParts} units long {switches} {crossings}");
         }
     }
 }

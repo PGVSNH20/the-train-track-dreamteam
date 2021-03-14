@@ -88,29 +88,39 @@ namespace TrainEngine.Tracks
             var track = new Track();
             while (track.EndStation == null)
             {
-                char? scanResult = FindNext();
+                char? trackSymbol = FindNextSymbol();
 
-                if (IsTrackPart(scanResult))
+                if (IsTrackPart(trackSymbol))
                     track.NumberOfTrackParts++;
-                if (scanResult == '=')
+                if (trackSymbol == '=')
                     track.CrossingsAtTrackPart.Add(track.NumberOfTrackParts);
+                if (trackSymbol == '>' || trackSymbol == '<') 
+                {
+                    var railroadSwitch = new RailroudSwitch()
+                    {
+                        Id = $"RS:X{_currentPos.x}Y{_currentPos.y}",
+                        AttTrackPart = track.NumberOfTrackParts
+                    };
+                    track.SwitchesAtTrackPart.Add(railroadSwitch);
+                }
+                    
 
                 while (track.StartStation == null)
                 {
-                    track.StartStation = AddStartStation(scanResult);
+                    track.StartStation = AddStartStation(trackSymbol);
                 }
-                while (scanResult != null)
+                while (trackSymbol != null)
                 {
-                    scanResult = FindNext();
-                    if (IsTrackPart(scanResult))
+                    trackSymbol = FindNextSymbol();
+                    if (IsTrackPart(trackSymbol))
                         track.NumberOfTrackParts++;
-                    if (scanResult == '=')
+                    if (trackSymbol == '=')
                         track.CrossingsAtTrackPart.Add(track.NumberOfTrackParts);
 
-                    if (scanResult == '[')
+                    if (trackSymbol == '[')
                     {
                         var startPos = _prevPos;
-                        track.EndStation = AddEndStation(scanResult);
+                        track.EndStation = AddEndStation(trackSymbol);
                         if (!track.EndStation.IsEndStation)
                         {
                             _currentPos = startPos;
@@ -118,12 +128,14 @@ namespace TrainEngine.Tracks
                         }
                         break;
                     }
-                    if (scanResult == '<')
+                    
+                    if (trackSymbol == '<')
                     {
                         AddBranchTrack(track);
                     }
                 }
             }
+            track.TrackLinks = GetTrackLinks(track);
             Tracks.Add(track);
         }
 
@@ -131,7 +143,7 @@ namespace TrainEngine.Tracks
         {
             var savedPrevPos = _prevPos;
             var savedCurrentPos = _currentPos;
-            FindNext();
+            FindNextSymbol();
             var ignorPos = _currentPos;
             _prevPos = savedCurrentPos;
             _currentPos = savedCurrentPos;
@@ -139,27 +151,39 @@ namespace TrainEngine.Tracks
             var branchTrack = new Track()
             {
                 StartStation = mainTrack.StartStation,
-                NumberOfTrackParts = mainTrack.NumberOfTrackParts + 1
+                NumberOfTrackParts = mainTrack.NumberOfTrackParts + 1,
+
             };
             foreach (var crossing in mainTrack.CrossingsAtTrackPart)
                 branchTrack.CrossingsAtTrackPart.Add(crossing);
+            foreach (var railroudSwitch in mainTrack.SwitchesAtTrackPart)
+                branchTrack.SwitchesAtTrackPart.Add(railroudSwitch);
 
             while (branchTrack.EndStation == null)
             {
-                char? scanResult2 = FindNext(ignorPos);
-                while (scanResult2 != null)
+                char? trackSymbol = FindNextSymbol(ignorPos);
+                while (trackSymbol != null)
                 {
-                    scanResult2 = FindNext();
-                    if (IsTrackPart(scanResult2))
+                    trackSymbol = FindNextSymbol();
+                    if (IsTrackPart(trackSymbol))
                         branchTrack.NumberOfTrackParts++;
-                    if (scanResult2 == '=')
+                    if (trackSymbol == '=')
                         branchTrack.CrossingsAtTrackPart.Add(branchTrack.NumberOfTrackParts);
+                    if (trackSymbol == '>' || trackSymbol == '<')
+                    {
+                        var railroadSwitch = new RailroudSwitch()
+                        {
+                            Id = $"RS:X{_currentPos.x}Y{_currentPos.y}",
+                            AttTrackPart = branchTrack.NumberOfTrackParts
+                        };
+                        branchTrack.SwitchesAtTrackPart.Add(railroadSwitch);
+                    }
 
-                    if (scanResult2 == '[')
+                    if (trackSymbol == '[')
                     {
                         var startPos = _prevPos;
                         var endPos = _currentPos;
-                        branchTrack.EndStation = AddEndStation(scanResult2);
+                        branchTrack.EndStation = AddEndStation(trackSymbol);
                         if (!branchTrack.EndStation.IsEndStation)
                         {
                             _currentPos = startPos;
@@ -168,12 +192,13 @@ namespace TrainEngine.Tracks
                         _currentPos = endPos;
                         break;
                     }
-                    if (scanResult2 == '<')
+                    if (trackSymbol == '<')
                     {
                         AddBranchTrack(branchTrack);
                     }
                 }
             }
+            branchTrack.TrackLinks = GetTrackLinks(branchTrack);
             Tracks.Add(branchTrack);
             _prevPos = savedPrevPos;
             _currentPos = savedCurrentPos;
@@ -197,12 +222,12 @@ namespace TrainEngine.Tracks
             string stationId = string.Empty;
             while (scanResult != ']')
             {
-                scanResult = FindNext();
+                scanResult = FindNextSymbol();
                 if (scanResult == ']')
                 {
                     var savedPrevPos = _prevPos;
                     var savedCurrentPos = _currentPos;
-                    scanResult = FindNext();
+                    scanResult = FindNextSymbol();
                     if (scanResult == null)
                     {
                         station.IsEndStation = true;
@@ -228,7 +253,7 @@ namespace TrainEngine.Tracks
 
             while (scanResult != ']')
             {
-                scanResult = FindNext();
+                scanResult = FindNextSymbol();
                 if (scanResult == ']')
                     break;
                 stationId += scanResult.ToString();
@@ -237,7 +262,7 @@ namespace TrainEngine.Tracks
             return station;
         }
 
-        private char? FindNext((int x, int y)? ignorPosition = null)
+        private char? FindNextSymbol((int x, int y)? ignorPosition = null)
         {
             (int x, int y) pOld = _prevPos;
             (int x, int y) p = _currentPos;
@@ -307,6 +332,7 @@ namespace TrainEngine.Tracks
 
 
         }
+
         private List<Track> FindTripTracks(int startStationId, int endStationId)
         {
             List<Track> currentTracks = Tracks.FindAll(t => t.StartStation.Id == startStationId);
@@ -329,6 +355,27 @@ namespace TrainEngine.Tracks
                 }
             }
             return null;
+        }
+
+        private List<Link> GetTrackLinks(Track track)
+        {
+            var trackLinks = new List<Link>();
+            string idFirstPart = Convert.ToString(track.StartStation.Id);
+            foreach (var railroadSwitch in track.SwitchesAtTrackPart)
+            {
+                trackLinks.Add(CreateLink(idFirstPart, railroadSwitch.Id));
+                idFirstPart = railroadSwitch.Id;
+            }
+            trackLinks.Add(CreateLink(idFirstPart, Convert.ToString(track.EndStation.Id)));
+            return trackLinks;
+
+            static Link CreateLink(string idFirstpart, string idSecondPart)
+            {
+                var id = $"{idFirstpart}-{idSecondPart}";
+                var newLink = new Link();
+                newLink.LinkId = id;
+                return newLink;
+            }
         }
     }
 }
