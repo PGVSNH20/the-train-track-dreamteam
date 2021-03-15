@@ -39,6 +39,7 @@ namespace TrainEngine.Tracks
                     Station node = new Station();
                     double number = char.GetNumericValue(symbol);
                     node.Id = Convert.ToInt32(number);
+                    track.TrackLength++;
 
                     if (track.StartStation == null)
                         track.StartStation = node;
@@ -46,7 +47,7 @@ namespace TrainEngine.Tracks
                         track.EndStation = node;
                 }
                 if (symbol == '-')
-                    track.NumberOfTrackParts++;
+                    track.TrackLength++;
             }
             Tracks.Add(track);
         }

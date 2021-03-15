@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrainEngine", "TrainEngine\TrainEngine.csproj", "{26699C82-6CD5-4F0F-B37C-A3CC6E040CDA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrainEngine.Tests", "TrainEngine.Tests\TrainEngine.Tests.csproj", "{3DD56CC6-89D9-4EFB-AE59-98610FDECFD0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{88566411-609D-43F1-A332-D3D006243C26} = {88566411-609D-43F1-A332-D3D006243C26}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrainConsole", "TrainConsole\TrainConsole.csproj", "{88566411-609D-43F1-A332-D3D006243C26}"
 	ProjectSection(ProjectDependencies) = postProject

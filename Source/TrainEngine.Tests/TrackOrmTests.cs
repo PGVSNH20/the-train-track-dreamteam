@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using TrainEngine.Tracks;
 using Xunit;
 
 namespace TrainEngine.Tests
@@ -36,17 +38,59 @@ namespace TrainEngine.Tests
         }
 
         [Fact]
-        public void When_ProvidingTwoStationsWithThreeTrackBetween_Expect_TheTrackToConcistOf5Parts()
+        public void When_ProvidingTwoStationsWithSevenTrackBetween_Expect_TheTrackToConcistOf9Parts()
         {
             // Arrange
-            string track = "[1]---[2]";
-            TrackOrm trackOrm = new TrackOrm();
+            TrackORMAdv trackOrm = new(@"Data\traintrack1.txt");
 
             // Act
-            var result = trackOrm.ParseTrackDescription(track);
+            Track result = trackOrm.Tracks[0];
 
             // Assert
-            Assert.Equal(5, result.NumberOfTrackParts);
+            Assert.Equal(9, result.NumberofTrackParts);
+        }
+        [Fact]
+        public void When_ProvidingThreeStationsWith12TrackBetween_Expect_TheTrackToConcistOf27Parts()
+        {
+            // Arrange
+   
+            TrackORM trackOrm = new();
+            // Act
+            
+            Track result = trackOrm.Tracks[0];
+            
+            // Assert
+            Assert.Equal(27, result.TrackLength);
+        }
+        [Fact]
+        public void When_ProvidingFourStationsWithManyTrackBetween_Expect_TheTrackToConcistOf49Parts()
+        {
+            // Arrange
+
+            TrackORMAdv trackOrm = new(@"Data\traintrack3.txt");
+            // Act
+
+            Track result = trackOrm.Tracks[0];
+
+            // Assert
+            Assert.Equal(49, result.NumberofTrackParts);
+        }
+        [Fact]
+        public void When_ProvidingFourStationsWithManyTrackBetween_Expect_TheTrackLengthToBe67()
+        {
+            // Arrange
+            TrackORMAdv trackOrm = new(@"Data\traintrack3.txt");
+            int numberofTracks = new();
+            List<Track> list = trackOrm.Tracks;
+           
+            // Act
+            foreach (Track track in list)
+            {
+                numberofTracks += track.TrackLength;
+            }
+
+            // Assert
+            Assert.Equal(67, numberofTracks);
         }
     }
 }

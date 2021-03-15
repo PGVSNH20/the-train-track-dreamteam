@@ -16,10 +16,20 @@ namespace TrainConsole
             // Parse the traintrack (Data/traintrack.txt) using ORM (see suggested code)
             // Parse the trains (Data/trains.txt)
 
-            var trainTracks = new TrackORMAdv(@"Data\traintrack4.txt");
+            TrackORMAdv trackOrm = new(@"Data\traintrack3.txt");
+            // Act
+
+            List<Track> list = trackOrm.Tracks;
+            int tracknumber = new();
+            foreach (Track track in list)
+            {
+                tracknumber = track.TrackLength;
+                Console.WriteLine(tracknumber);
+            }
+            // var trainTracks = new TrackORMAdv(@"Data\traintrack4.txt");
             //trainTracks.PrintTrackMap();
 
-            trainTracks.GetMinTravelTime(3, 1, 5);
+            //trainTracks.GetMinTravelTime(3, 1, 5);
 
 
 

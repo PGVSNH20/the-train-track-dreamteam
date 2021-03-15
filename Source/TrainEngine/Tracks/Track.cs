@@ -8,7 +8,8 @@ namespace TrainEngine.Tracks
     {
         public Station StartStation { get; set; }
         public Station EndStation { get; set; }
-        public int NumberOfTrackParts { get; set; }
+        public int TrackLength { get; set; }
+        public int NumberofTrackParts { get; set; }
         public List<int> CrossingsAtTrackPart { set; get; }
 
         public Track()
@@ -20,9 +21,9 @@ namespace TrainEngine.Tracks
             if (CrossingsAtTrackPart != null && CrossingsAtTrackPart.Count > 0)
             {
                 string crossings = $"has {CrossingsAtTrackPart.Count} crossings";
-                return ($"Track from {StartStation.Id} to {EndStation.Id} is {NumberOfTrackParts} units long and {crossings}");
+                return ($"Track from {StartStation.Id} to {EndStation.Id} is {TrackLength} units long and {crossings}");
             }
-            return ($"Track from {StartStation.Id} to {EndStation.Id} is {NumberOfTrackParts} units long");
+            return ($"Track from {StartStation.Id} to {EndStation.Id} is {TrackLength} units long");
         }
     }
 }

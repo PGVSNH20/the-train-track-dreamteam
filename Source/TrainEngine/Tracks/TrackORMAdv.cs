@@ -83,17 +83,29 @@ namespace TrainEngine.Tracks
             }
         }
 
+        public int CountTracks()
+        {
+            int trackCount = new int();
+            foreach (char track in _trainTrackMap)
+            {
+                if (IsTrackPart(track) || track > 47 && track < 59)
+                {
+                    trackCount++;
+                }
+            }            
+            return trackCount;
+        }
+
         private void AddTracks()
         {
             var track = new Track();
+            track.NumberofTrackParts = CountTracks();
             while (track.EndStation == null)
             {
                 char? scanResult = FindNext();
-
-                if (IsTrackPart(scanResult))
-                    track.NumberOfTrackParts++;
+               
                 if (scanResult == '=')
-                    track.CrossingsAtTrackPart.Add(track.NumberOfTrackParts);
+                    track.CrossingsAtTrackPart.Add(track.TrackLength);
 
                 while (track.StartStation == null)
                 {
@@ -103,18 +115,20 @@ namespace TrainEngine.Tracks
                 {
                     scanResult = FindNext();
                     if (IsTrackPart(scanResult))
-                        track.NumberOfTrackParts++;
+                        track.TrackLength++;
                     if (scanResult == '=')
-                        track.CrossingsAtTrackPart.Add(track.NumberOfTrackParts);
+                        track.CrossingsAtTrackPart.Add(track.TrackLength);
 
                     if (scanResult == '[')
                     {
                         var startPos = _prevPos;
                         track.EndStation = AddEndStation(scanResult);
+                        track.TrackLength++;
                         if (!track.EndStation.IsEndStation)
                         {
                             _currentPos = startPos;
                             AddTracks();
+                            
                         }
                         break;
                     }
@@ -124,7 +138,8 @@ namespace TrainEngine.Tracks
                     }
                 }
             }
-            Tracks.Add(track);
+            
+            Tracks.Add(track);     
         }
 
         private void AddBranchTrack(Track mainTrack)
@@ -139,7 +154,7 @@ namespace TrainEngine.Tracks
             var branchTrack = new Track()
             {
                 StartStation = mainTrack.StartStation,
-                NumberOfTrackParts = mainTrack.NumberOfTrackParts + 1
+                TrackLength = mainTrack.TrackLength + 1
             };
             foreach (var crossing in mainTrack.CrossingsAtTrackPart)
                 branchTrack.CrossingsAtTrackPart.Add(crossing);
@@ -151,9 +166,9 @@ namespace TrainEngine.Tracks
                 {
                     scanResult2 = FindNext();
                     if (IsTrackPart(scanResult2))
-                        branchTrack.NumberOfTrackParts++;
+                        branchTrack.TrackLength++;
                     if (scanResult2 == '=')
-                        branchTrack.CrossingsAtTrackPart.Add(branchTrack.NumberOfTrackParts);
+                        branchTrack.CrossingsAtTrackPart.Add(branchTrack.TrackLength);
 
                     if (scanResult2 == '[')
                     {
@@ -297,7 +312,7 @@ namespace TrainEngine.Tracks
 
             var trains = new TrainsOrm();
             var train = trains.GetTrainById(trainId);
-            double tripLengh = tripTracks.Sum(t => t.NumberOfTrackParts) * 10;
+            double tripLengh = tripTracks.Sum(t => t.TrackLength) * 10;
             double hours = tripLengh / train.MaxSpeed;
             var minTravelTime = TimeSpan.FromHours(hours);
 
