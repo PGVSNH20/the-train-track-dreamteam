@@ -12,6 +12,7 @@ namespace TrainEngine.Travel
         public List<TripStop> TimeTable { get; set; }
         private TimeSpan Time { get; set; }
         public int TimeFastForward { get; set; }
+        private List<string> TrackLinksInUse { get; set; }
 
         public Simulator(List<TripStop> timeTable, string fakeClock, int timeFastForward)
         {

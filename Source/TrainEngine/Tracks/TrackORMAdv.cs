@@ -92,18 +92,9 @@ namespace TrainEngine.Tracks
 
                 if (IsTrackPart(trackSymbol))
                     track.NumberOfTrackParts++;
+
                 if (trackSymbol == '=')
                     track.CrossingsAtTrackPart.Add(track.NumberOfTrackParts);
-                if (trackSymbol == '>' || trackSymbol == '<') 
-                {
-                    var railroadSwitch = new RailroudSwitch()
-                    {
-                        Id = $"RS:X{_currentPos.x}Y{_currentPos.y}",
-                        AttTrackPart = track.NumberOfTrackParts
-                    };
-                    track.SwitchesAtTrackPart.Add(railroadSwitch);
-                }
-                    
 
                 while (track.StartStation == null)
                 {
@@ -114,8 +105,20 @@ namespace TrainEngine.Tracks
                     trackSymbol = FindNextSymbol();
                     if (IsTrackPart(trackSymbol))
                         track.NumberOfTrackParts++;
+
                     if (trackSymbol == '=')
                         track.CrossingsAtTrackPart.Add(track.NumberOfTrackParts);
+
+                    if (trackSymbol == '>' || trackSymbol == '<')
+                    {
+                        var railroadSwitch = new RailroudSwitch()
+                        {
+                            Id = $"RS:X{_currentPos.x}Y{_currentPos.y}",
+                            AttTrackPart = track.NumberOfTrackParts
+                        };
+                        track.SwitchesAtTrackPart.Add(railroadSwitch);
+                        Console.WriteLine($"added {railroadSwitch.Id} to {track.StartStation.Id}");
+                    }
 
                     if (trackSymbol == '[')
                     {
@@ -135,7 +138,7 @@ namespace TrainEngine.Tracks
                     }
                 }
             }
-            track.TrackLinks = GetTrackLinks(track);
+            track.TrackLinks = FindTrackLinks(track);
             Tracks.Add(track);
         }
 
@@ -157,8 +160,15 @@ namespace TrainEngine.Tracks
             foreach (var crossing in mainTrack.CrossingsAtTrackPart)
                 branchTrack.CrossingsAtTrackPart.Add(crossing);
             foreach (var railroudSwitch in mainTrack.SwitchesAtTrackPart)
-                branchTrack.SwitchesAtTrackPart.Add(railroudSwitch);
-
+            {
+                var newRailroudSwitch = new RailroudSwitch()
+                {
+                    Id = railroudSwitch.Id,
+                    AttTrackPart = railroudSwitch.AttTrackPart
+                };
+                branchTrack.SwitchesAtTrackPart.Add(newRailroudSwitch);
+            }
+                
             while (branchTrack.EndStation == null)
             {
                 char? trackSymbol = FindNextSymbol(ignorPos);
@@ -198,7 +208,7 @@ namespace TrainEngine.Tracks
                     }
                 }
             }
-            branchTrack.TrackLinks = GetTrackLinks(branchTrack);
+            branchTrack.TrackLinks = FindTrackLinks(branchTrack);
             Tracks.Add(branchTrack);
             _prevPos = savedPrevPos;
             _currentPos = savedCurrentPos;
@@ -314,24 +324,82 @@ namespace TrainEngine.Tracks
             }
         }
 
-        public void GetMinTravelTime(int trainId, int startStationId, int endStationId)
-        {
-            List<Track> tripTracks = new List<Track>();
-            
-            tripTracks = FindTripTracks(startStationId, endStationId);
+        public TimeSpan GetMinTravelTime(int trainId, int startStationId, int endStationId)
+        {            
+            var tripTracks = FindTripTracks(startStationId, endStationId);
 
             var trains = new TrainsOrm();
-            var train = trains.GetTrainById(trainId);
+            var maxSpeed = trains.GetTrainById(trainId).MaxSpeed;
             double tripLengh = tripTracks.Sum(t => t.NumberOfTrackParts) * 10;
-            double hours = tripLengh / train.MaxSpeed;
+            double hours = tripLengh / maxSpeed;
             var minTravelTime = TimeSpan.FromHours(hours);
 
-            foreach (Track tmpTrack in tripTracks) Console.WriteLine(tmpTrack.ToString());
-
-            Console.WriteLine($"travel time {minTravelTime}");
-
-
+            return minTravelTime;
         }
+
+        public Dictionary<string, TimeSpan> GetLinkMinTravelTimes(
+            int trainId, 
+            int startStationId, 
+            int endStationId)
+        {
+            Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
+            var trains = new TrainsOrm();
+            var maxSpeed = trains.GetTrainById(trainId).MaxSpeed;
+
+            var tripTracks = FindTripTracks(startStationId, endStationId);
+
+            TimeSpan timeTrack = new TimeSpan(0);
+
+            foreach (var tripTrack in tripTracks)
+            {
+                foreach (var link in tripTrack.TrackLinks)
+                {
+                    double linkLenghs = link.NumberOfTrackParts * 10;
+                    double travelTimeInHours = linkLenghs / maxSpeed;
+                    var minTravelTime = TimeSpan.FromHours(travelTimeInHours);
+                    linkTravelTimes.Add(link.LinkId, minTravelTime);
+                }
+            }
+
+            return linkTravelTimes;
+        }
+
+        public TimeSpan GetTravelTime(int speed, int startStationId, int endStationId)
+        {
+            var tripTracks = FindTripTracks(startStationId, endStationId);
+
+            var trains = new TrainsOrm();
+            double tripLengh = tripTracks.Sum(t => t.NumberOfTrackParts) * 10;
+            double hours = tripLengh / speed;
+            var minTravelTime = TimeSpan.FromHours(hours);
+
+            return minTravelTime;
+        }
+
+        public Dictionary<string, TimeSpan> GetLinkTravelTimes(
+            int speed,
+            int startStationId,
+            int endStationId)
+        {
+            Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
+            var trains = new TrainsOrm();
+
+            var tripTracks = FindTripTracks(startStationId, endStationId);
+
+            foreach (var tripTrack in tripTracks)
+            {
+                foreach (var link in tripTrack.TrackLinks)
+                {
+                    double linkLenghs = link.NumberOfTrackParts * 10;
+                    double travelTimeInHours = linkLenghs / speed;
+                    var minTravelTime = TimeSpan.FromHours(travelTimeInHours);
+                    linkTravelTimes.Add(link.LinkId, minTravelTime);
+                }
+            }
+
+            return linkTravelTimes;
+        }
+
 
         private List<Track> FindTripTracks(int startStationId, int endStationId)
         {
@@ -357,23 +425,29 @@ namespace TrainEngine.Tracks
             return null;
         }
 
-        private List<Link> GetTrackLinks(Track track)
+        private List<Link> FindTrackLinks(Track track)
         {
             var trackLinks = new List<Link>();
+            var trackPartCounter = 0;
             string idFirstPart = Convert.ToString(track.StartStation.Id);
             foreach (var railroadSwitch in track.SwitchesAtTrackPart)
             {
-                trackLinks.Add(CreateLink(idFirstPart, railroadSwitch.Id));
+                trackLinks.Add(CreateLink(idFirstPart, railroadSwitch.Id, railroadSwitch.AttTrackPart));
                 idFirstPart = railroadSwitch.Id;
             }
-            trackLinks.Add(CreateLink(idFirstPart, Convert.ToString(track.EndStation.Id)));
+            trackLinks.Add(CreateLink(idFirstPart, Convert.ToString(track.EndStation.Id), track.NumberOfTrackParts));
             return trackLinks;
 
-            static Link CreateLink(string idFirstpart, string idSecondPart)
+            Link CreateLink(string idFirstpart, string idSecondPart, int switchAttTrackpart)
             {
                 var id = $"{idFirstpart}-{idSecondPart}";
+
+                var numberOfTrackParts = switchAttTrackpart - trackPartCounter;
+                trackPartCounter += switchAttTrackpart;
+
                 var newLink = new Link();
                 newLink.LinkId = id;
+                newLink.NumberOfTrackParts = numberOfTrackParts;
                 return newLink;
             }
         }

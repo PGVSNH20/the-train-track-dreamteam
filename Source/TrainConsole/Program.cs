@@ -19,7 +19,9 @@ namespace TrainConsole
             var trainTracks = new TrackORMAdv(@"Data\traintrack4.txt");
             //trainTracks.PrintTrackMap();
 
-            trainTracks.GetMinTravelTime(3, 1, 5);
+            var foo = trainTracks.GetTravelTime(60, 4, 8);
+            var foo2 = trainTracks.GetLinkTravelTimes(60, 4, 8);
+
 
 
 
