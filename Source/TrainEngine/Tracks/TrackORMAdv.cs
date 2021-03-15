@@ -449,7 +449,7 @@ namespace TrainEngine.Tracks
 
         private List<Track> FindTripTracks(int beginStationId, int finishStationId, string direction)
         {
-            if (stackOverflowConroller++ > 50)
+            if (stackOverflowConroller++ > 100)
                 return null;
             if (direction == "to east")
             {
