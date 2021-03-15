@@ -132,7 +132,7 @@ namespace TrainEngine.Tracks
                         }
                         break;
                     }
-                    
+
                     if (trackSymbol == '<')
                     {
                         AddBranchTrack(track);
@@ -156,7 +156,6 @@ namespace TrainEngine.Tracks
             {
                 StartStation = mainTrack.StartStation,
                 NumberOfTrackParts = mainTrack.NumberOfTrackParts + 1,
-
             };
             foreach (var crossing in mainTrack.CrossingsAtTrackPart)
                 branchTrack.CrossingsAtTrackPart.Add(crossing);
@@ -169,7 +168,7 @@ namespace TrainEngine.Tracks
                 };
                 branchTrack.SwitchesAtTrackPart.Add(newRailroudSwitch);
             }
-                
+
             while (branchTrack.EndStation == null)
             {
                 char? trackSymbol = FindNextSymbol(ignorPos);
@@ -345,8 +344,8 @@ namespace TrainEngine.Tracks
         }
 
         public Dictionary<string, TimeSpan> GetLinkMinTravelTimes(
-            int trainId, 
-            int beginStationId, 
+            int trainId,
+            int beginStationId,
             int finishStationId)
         {
             Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
@@ -428,10 +427,7 @@ namespace TrainEngine.Tracks
                 return linkTravelTimes.Reverse().ToDictionary(l => l.Key, l => l.Value);
             }
             return linkTravelTimes;
-
-            
         }
-
 
         private List<Track> FindTripTracks(int beginStationId, int finishStationId, string direction)
         {
@@ -518,6 +514,19 @@ namespace TrainEngine.Tracks
                 newLink.NumberOfTrackParts = numberOfTrackParts;
                 return newLink;
             }
+        }
+
+        public int GetTrackLength(int beginStationId, int finishStationId)
+        {
+            var tracks = FindTripTracks(beginStationId, finishStationId, "to east");
+            if (tracks == null)
+                tracks = FindTripTracks(beginStationId, finishStationId, "to west");
+            int trackLength = 0;
+            foreach (var track in tracks)
+            {
+                trackLength += track.NumberOfTrackParts * 10;
+            }
+            return trackLength;
         }
     }
 }

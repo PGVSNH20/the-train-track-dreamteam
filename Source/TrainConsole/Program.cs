@@ -37,7 +37,7 @@ namespace TrainConsole
 
 
             var travelPlan = new TravelPlan().SettActualTrain(1).StartAt(1, "10:14").ArriveAt(13, "11:45").ArriveAt(16, "13:45");
-            travelPlan.SettActualTrain(2).StartAt(2, "10:25").ArriveAt(3, "11:55").ArriveAt(6, "12:35");
+            travelPlan.SettActualTrain(2).StartAt(1, "10:25").ArriveAt(3, "11:55").ArriveAt(6, "12:35");
             travelPlan.SettActualTrain(3).StartAt(3, "11:45").ArriveAt(6, "12:35");
             travelPlan.Simulate("10:00", 300);
 
