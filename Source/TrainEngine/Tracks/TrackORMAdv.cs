@@ -117,7 +117,6 @@ namespace TrainEngine.Tracks
                             AttTrackPart = track.NumberOfTrackParts
                         };
                         track.SwitchesAtTrackPart.Add(railroadSwitch);
-                        Console.WriteLine($"added {railroadSwitch.Id} to {track.StartStation.Id}");
                     }
 
                     if (trackSymbol == '[')
@@ -324,9 +323,15 @@ namespace TrainEngine.Tracks
             }
         }
 
-        public TimeSpan GetMinTravelTime(int trainId, int startStationId, int endStationId)
-        {            
-            var tripTracks = FindTripTracks(startStationId, endStationId);
+        public TimeSpan GetMinTravelTime(int trainId, int beginStationId, int finishStationId)
+        {
+            var direction = "to east";
+            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
+            if (tripTracks == null)
+            {
+                direction = "to west";
+                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
+            }
 
             var trains = new TrainsOrm();
             var maxSpeed = trains.GetTrainById(trainId).MaxSpeed;
@@ -339,16 +344,20 @@ namespace TrainEngine.Tracks
 
         public Dictionary<string, TimeSpan> GetLinkMinTravelTimes(
             int trainId, 
-            int startStationId, 
-            int endStationId)
+            int beginStationId, 
+            int finishStationId)
         {
             Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
             var trains = new TrainsOrm();
             var maxSpeed = trains.GetTrainById(trainId).MaxSpeed;
 
-            var tripTracks = FindTripTracks(startStationId, endStationId);
-
-            TimeSpan timeTrack = new TimeSpan(0);
+            var direction = "to east";
+            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
+            if (tripTracks == null)
+            {
+                direction = "to west";
+                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
+            }
 
             foreach (var tripTrack in tripTracks)
             {
@@ -360,13 +369,20 @@ namespace TrainEngine.Tracks
                     linkTravelTimes.Add(link.LinkId, minTravelTime);
                 }
             }
-
+            if (direction == "to west")
+                linkTravelTimes.Reverse();
             return linkTravelTimes;
         }
 
-        public TimeSpan GetTravelTime(int speed, int startStationId, int endStationId)
+        public TimeSpan GetTravelTime(int speed, int beginStationId, int finishStationId)
         {
-            var tripTracks = FindTripTracks(startStationId, endStationId);
+            var direction = "to east";
+            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
+            if (tripTracks == null)
+            {
+                direction = "to west";
+                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
+            }
 
             var trains = new TrainsOrm();
             double tripLengh = tripTracks.Sum(t => t.NumberOfTrackParts) * 10;
@@ -376,16 +392,17 @@ namespace TrainEngine.Tracks
             return minTravelTime;
         }
 
-        public Dictionary<string, TimeSpan> GetLinkTravelTimes(
-            int speed,
-            int startStationId,
-            int endStationId)
+        public Dictionary<string, TimeSpan> GetLinkTravelTimes(int speed, int beginStationId, int finishStationId)
         {
             Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
-            var trains = new TrainsOrm();
 
-            var tripTracks = FindTripTracks(startStationId, endStationId);
-
+            var direction = "to east";
+            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
+            if (tripTracks == null)
+            {
+                direction = "to west";
+                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
+            }
             foreach (var tripTrack in tripTracks)
             {
                 foreach (var link in tripTrack.TrackLinks)
@@ -396,32 +413,69 @@ namespace TrainEngine.Tracks
                     linkTravelTimes.Add(link.LinkId, minTravelTime);
                 }
             }
-
+            if (direction == "to west") {
+                return linkTravelTimes.Reverse().ToDictionary(l => l.Key, l => l.Value);
+            }
+                
             return linkTravelTimes;
         }
 
 
-        private List<Track> FindTripTracks(int startStationId, int endStationId)
+        private List<Track> FindTripTracks(int beginStationId, int finishStationId, string direction)
         {
-            List<Track> currentTracks = Tracks.FindAll(t => t.StartStation.Id == startStationId);
-            foreach (Track currentTrack in currentTracks)
+            if (direction == "to east")
             {
-                var tripTracks = new List<Track>();
-                tripTracks.Add(currentTrack);
-                if (currentTrack.EndStation.Id == endStationId)
+                List<Track> currentTracks = new List<Track>();
+                lock (Tracks)
                 {
-                    return tripTracks;
+                    currentTracks = Tracks.FindAll(t => t.StartStation.Id == beginStationId);
                 }
-                else
+                foreach (Track currentTrack in currentTracks)
                 {
-                    var tmpResult = FindTripTracks(currentTrack.EndStation.Id, endStationId);
-                    if (tmpResult != null)
+                    var tripTracks = new List<Track>();
+                    tripTracks.Add(currentTrack);
+                    if (currentTrack.EndStation.Id == finishStationId)
                     {
-                        tripTracks.AddRange(tmpResult);
                         return tripTracks;
+                    }
+                    else
+                    {
+                        var tmpResult = FindTripTracks(currentTrack.EndStation.Id, finishStationId, direction);
+                        if (tmpResult != null)
+                        {
+                            tripTracks.AddRange(tmpResult);
+                            return tripTracks;
+                        }
                     }
                 }
             }
+            if (direction == "to west")
+            {
+                List<Track> currentTracks = new List<Track>();
+                lock (Tracks)
+                {
+                    currentTracks = Tracks.FindAll(t => t.EndStation.Id == beginStationId);
+                }
+                foreach (Track currentTrack in currentTracks)
+                {
+                    var tripTracks = new List<Track>();
+                    tripTracks.Add(currentTrack);
+                    if (currentTrack.StartStation.Id == finishStationId)
+                    {
+                        return tripTracks;
+                    }
+                    else
+                    {
+                        var tmpResult = FindTripTracks(currentTrack.EndStation.Id, finishStationId, direction);
+                        if (tmpResult != null)
+                        {
+                            tripTracks.AddRange(tmpResult);
+                            return tripTracks;
+                        }
+                    }
+                }
+            }
+
             return null;
         }
 

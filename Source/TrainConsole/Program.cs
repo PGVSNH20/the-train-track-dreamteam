@@ -21,6 +21,7 @@ namespace TrainConsole
 
             var foo = trainTracks.GetTravelTime(60, 4, 8);
             var foo2 = trainTracks.GetLinkTravelTimes(60, 4, 8);
+            var foo3 = trainTracks.GetLinkTravelTimes(60, 7, 4);
 
 
 
@@ -40,7 +41,9 @@ namespace TrainConsole
 
             var travelPlan = new TravelPlan().SettActualTrain(1).StartAt(1, "10:14").ArriveAt(2, "11:45");
             travelPlan.SettActualTrain(2).StartAt(3, "10:25").ArriveAt(4, "11:55").ArriveAt(4, "12:35").ArriveAt(4, "12:59");
-            travelPlan.Simulate("10:00", 1000);
+            travelPlan.Simulate("10:00", 100);
+
+
 
             // Step 2:
             // Make the trains run in treads
