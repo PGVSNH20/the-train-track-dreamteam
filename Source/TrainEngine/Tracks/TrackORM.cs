@@ -18,6 +18,13 @@ namespace TrainEngine.Tracks
             CreateTracks();
         }
 
+        public TrackORM(string path)
+        {
+            Read(path);
+            Tracks = new List<Track>();
+            CreateTracks();
+        }
+
         private void Read()
         {
             string[] line = File.ReadAllLines("Data/traintrack2.txt");
@@ -28,10 +35,19 @@ namespace TrainEngine.Tracks
             }
         }
 
+        private void Read(string path)
+        {
+            string[] line = File.ReadAllLines(path);
+            TrackMap = new char[line[0].Length];
+            for (var i = 0; i < TrackMap.Length; i++)
+            {
+                TrackMap[i] = Convert.ToChar(line[0][i]);
+            }
+        }
+
         private void CreateTracks()
         {
             Track track = new Track();
-
             foreach (char symbol in TrackMap)
             {
                 if (symbol > 47 && symbol < 59)
@@ -39,7 +55,7 @@ namespace TrainEngine.Tracks
                     Station node = new Station();
                     double number = char.GetNumericValue(symbol);
                     node.Id = Convert.ToInt32(number);
-                    track.TrackLength++;
+                    track.NumberofTrackParts++;
 
                     if (track.StartStation == null)
                         track.StartStation = node;
@@ -47,7 +63,7 @@ namespace TrainEngine.Tracks
                         track.EndStation = node;
                 }
                 if (symbol == '-')
-                    track.TrackLength++;
+                    track.NumberofTrackParts++;
             }
             Tracks.Add(track);
         }

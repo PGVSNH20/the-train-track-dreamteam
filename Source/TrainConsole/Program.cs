@@ -16,7 +16,7 @@ namespace TrainConsole
             // Parse the traintrack (Data/traintrack.txt) using ORM (see suggested code)
             // Parse the trains (Data/trains.txt)
 
-            TrackORMAdv trackOrm = new(@"Data\traintrack3.txt");
+            /*TrackORMAdv trackOrm = new(@"Data\traintrack3.txt");
             // Act
 
             List<Track> list = trackOrm.Tracks;
@@ -25,7 +25,16 @@ namespace TrainConsole
             {
                 tracknumber = track.TrackLength;
                 Console.WriteLine(tracknumber);
-            }
+            }*/
+            TrackORM trackOrm = new("Data/traintrack2.txt");
+
+            // Act
+            Track result = trackOrm.Tracks[0];
+
+            // Assert
+            Console.WriteLine(result.NumberofTrackParts);
+
+
             // var trainTracks = new TrackORMAdv(@"Data\traintrack4.txt");
             //trainTracks.PrintTrackMap();
 

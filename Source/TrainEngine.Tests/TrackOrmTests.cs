@@ -41,7 +41,7 @@ namespace TrainEngine.Tests
         public void When_ProvidingTwoStationsWithSevenTrackBetween_Expect_TheTrackToConcistOf9Parts()
         {
             // Arrange
-            TrackORMAdv trackOrm = new(@"Data\traintrack1.txt");
+            TrackORM trackOrm = new(@"Data\traintrack1.txt");
 
             // Act
             Track result = trackOrm.Tracks[0];
@@ -60,7 +60,7 @@ namespace TrainEngine.Tests
             Track result = trackOrm.Tracks[0];
             
             // Assert
-            Assert.Equal(27, result.TrackLength);
+            Assert.Equal(27, result.NumberofTrackParts);
         }
         [Fact]
         public void When_ProvidingFourStationsWithManyTrackBetween_Expect_TheTrackToConcistOf49Parts()
