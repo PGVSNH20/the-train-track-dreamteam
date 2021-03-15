@@ -16,6 +16,8 @@ namespace TrainEngine.Tracks
         private (int x, int y) _currentPos = (0, 0);
         public string SourceFile { get; set; }
 
+        private int stackOverflowConroller = 0;
+
         public TrackORMAdv()
         {
             SourceFile = @"Data\traintrack4.txt";
@@ -397,11 +399,18 @@ namespace TrainEngine.Tracks
             Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
 
             var direction = "to east";
+            stackOverflowConroller = 0;
             var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
             if (tripTracks == null)
             {
                 direction = "to west";
+                stackOverflowConroller = 0;
                 tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
+            }
+            if (tripTracks == null)
+            {
+                Console.WriteLine($"No possible trip with stat at station {beginStationId} and end at station {finishStationId}");
+                return null;
             }
             foreach (var tripTrack in tripTracks)
             {
@@ -413,16 +422,21 @@ namespace TrainEngine.Tracks
                     linkTravelTimes.Add(link.LinkId, minTravelTime);
                 }
             }
-            if (direction == "to west") {
+
+            if (direction == "to west")
+            {
                 return linkTravelTimes.Reverse().ToDictionary(l => l.Key, l => l.Value);
             }
-                
             return linkTravelTimes;
+
+            
         }
 
 
         private List<Track> FindTripTracks(int beginStationId, int finishStationId, string direction)
         {
+            if (stackOverflowConroller++ > 50)
+                return null;
             if (direction == "to east")
             {
                 List<Track> currentTracks = new List<Track>();

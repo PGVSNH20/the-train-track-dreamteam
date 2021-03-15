@@ -14,6 +14,7 @@ namespace TrainEngine.Travel
         private TimeSpan Time { get; set; }
         public int TimeFastForward { get; set; }
         public TrackORMAdv TrackORMadv { get; set; }
+        private List<LinkInUse> LinksInUse { get; set; }
 
         public Simulator(List<TripStop> timeTable, string fakeClock, int timeFastForward, TrackORMAdv trackORMadv)
         {
@@ -21,6 +22,7 @@ namespace TrainEngine.Travel
             Time = TimeSpan.Parse(fakeClock);
             TimeFastForward = timeFastForward;
             TrackORMadv = trackORMadv;
+            LinksInUse = new List<LinkInUse>();
         }
 
         public void Simulate(int timeFastForward)
@@ -50,15 +52,15 @@ namespace TrainEngine.Travel
                 var beginStation = trainTimeTable[0].StationId;
                 var finishStation = trainTimeTable[trainTimeTable.Count() - 1].StationId;
 
-                //var linkTravelTimes = new Dictionary<string, TimeSpan>(TrackORMadv.GetLinkTravelTimes(100, beginStation, finishStation));
+                var linkTravelTimes = new Dictionary<string, TimeSpan>(TrackORMadv.GetLinkTravelTimes(100, beginStation, finishStation));
 
-                //var uppdateLinksInUseTasks = Task.Run(() => UppdateLinksInUse(
-                //    trainId,
-                //    linkTravelTimes,
-                //    time,
-                //    timeFastForward
-                //    ));
-                //trainTasks.Add(uppdateLinksInUseTasks);
+                var uppdateLinksInUseTasks = Task.Run(() => UppdateLinksInUse(
+                    trainId,
+                    linkTravelTimes,
+                    time,
+                    timeFastForward
+                    ));
+                trainTasks.Add(uppdateLinksInUseTasks);
             }
 
 
@@ -68,7 +70,6 @@ namespace TrainEngine.Travel
         private void RunTrain(int trainId, List<TripStop> trainTimeTable, TimeSpan fakeClock, int timeFastForward)
         {
 
- 
 
             int waitTime = Convert.ToInt32(((TimeSpan)trainTimeTable[0].DepartureTime - fakeClock).TotalMilliseconds);
             fakeClock += (TimeSpan)trainTimeTable[0].DepartureTime - fakeClock;
@@ -95,24 +96,43 @@ namespace TrainEngine.Travel
         }
         private void UppdateLinksInUse(int trainId, Dictionary<string, TimeSpan> linkTravelTimes, TimeSpan fakeClock, int timeFastForward)
         {
-            string previusLink = null;
+            LinkInUse previusLink = null;
             foreach (var link in linkTravelTimes)
             {
                 if (previusLink != null)
                 {
-                    Console.WriteLine($"Train {trainId} leaving {previusLink}");
+                    lock (LinksInUse)
+                    {
+                        LinksInUse.Remove(previusLink);
+                    }
                 }
                 
                 int waitTime = Convert.ToInt32((link.Value - fakeClock).TotalMilliseconds);
                 fakeClock += link.Value - fakeClock;
 
-                Console.WriteLine($"Link {link.Key} in use by {trainId}");
+                var currentLink = new LinkInUse()
+                {
+                    LinkId = link.Key,
+                    UsedByTrainId = trainId
+                };
+
+                if (LinksInUse.Find(l => l.LinkId == link.Key) != null)
+                {
+                    Console.WriteLine($"TRAIN CRACH ON LINK {link.Key}");
+                    Console.ReadLine();
+                }
+
+                lock (LinksInUse)
+                {
+                    LinksInUse.Add(currentLink);
+                }
+
                 if (waitTime > 0)
                 {
                     Thread.Sleep(waitTime / timeFastForward);
                 }
                 
-                previusLink = link.Key;
+                previusLink = currentLink;
             }
         }
     }

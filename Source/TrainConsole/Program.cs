@@ -21,9 +21,6 @@ namespace TrainConsole
 
             var foo = trainTracks.GetTravelTime(60, 4, 8);
             var foo2 = trainTracks.GetLinkTravelTimes(60, 4, 8);
-            var foo3 = trainTracks.GetLinkTravelTimes(60, 7, 4);
-
-
 
 
             //var foo = new TravelPlan().SettActualTrain(2).StartAt(3, "11:03").ArriveAt(5, "12:00");
@@ -39,9 +36,10 @@ namespace TrainConsole
 
 
 
-            var travelPlan = new TravelPlan().SettActualTrain(1).StartAt(1, "10:14").ArriveAt(2, "11:45");
-            travelPlan.SettActualTrain(2).StartAt(3, "10:25").ArriveAt(4, "11:55").ArriveAt(4, "12:35").ArriveAt(4, "12:59");
-            travelPlan.Simulate("10:00", 100);
+            var travelPlan = new TravelPlan().SettActualTrain(1).StartAt(1, "10:14").ArriveAt(13, "11:45").ArriveAt(16, "13:45");
+            travelPlan.SettActualTrain(2).StartAt(2, "10:25").ArriveAt(3, "11:55").ArriveAt(6, "12:35");
+            travelPlan.SettActualTrain(3).StartAt(3, "11:45").ArriveAt(6, "12:35");
+            travelPlan.Simulate("10:00", 300);
 
 
 
