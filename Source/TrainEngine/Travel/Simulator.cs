@@ -97,6 +97,8 @@ namespace TrainEngine.Travel
             var beginStation = trainTimeTable[0].StationId;
             var finishStation = trainTimeTable[trainTimeTable.Count() - 1].StationId;
 
+            var tripDirection = TrackORMadv.GetTipDirection(beginStation, finishStation);
+
             for (var i = 0; i < trainTimeTable.Count() - 1; i++)
             {
                 var trackLenght = TrackORMadv.GetTrackLength(trainTimeTable[i].StationId, trainTimeTable[i + 1].StationId);
@@ -117,6 +119,14 @@ namespace TrainEngine.Travel
                         {
                             LinksInUse.Remove(previusLink);
                         }
+                        if (trainTimeTable[i + 1].DepartureTime != null)
+                        {
+                            var stopAtStationTime = Convert.ToInt32((trainTimeTable[i + 1].DepartureTime - trainTimeTable[i + 1].ArrivalTime).Value.Milliseconds);
+                            if (stopAtStationTime > 0)
+                            {
+                                Thread.Sleep(stopAtStationTime / timeFastForward);
+                            }
+                        }
                     }
 
                     int waitTime = Convert.ToInt32((link.Value - fakeClock).TotalMilliseconds);
@@ -125,12 +135,13 @@ namespace TrainEngine.Travel
                     var currentLink = new LinkInUse()
                     {
                         LinkId = link.Key,
-                        UsedByTrainId = trainId
+                        UsedByTrainId = trainId,
+                        Direction = tripDirection
                     };
 
                     lock (LinksInUse)
                     {
-                        if (LinksInUse.Find(l => l.LinkId == link.Key) != null)
+                        if (LinksInUse.Find(l => (l.LinkId == link.Key && l.Direction != tripDirection)) != null)
                         {
                             Console.WriteLine($"TRAIN CRASH!!! " +
                                 $"Train {trainId} and train " +

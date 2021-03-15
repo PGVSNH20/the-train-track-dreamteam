@@ -19,11 +19,24 @@ namespace TrainEngine.Travel
 
         public Train Train { get; set; }
 
-        private TrackORMAdv trackORMAdv { get; set; }
+        private TrackORMAdv _trackORMAdv { get; set; }
 
         public TravelPlan()
         {
             TimeTable = new List<TripStop>();
+            _trackORMAdv = new TrackORMAdv();
+        }
+
+        public TravelPlan(TrackORMAdv trackORMAdv)
+        {
+            TimeTable = new List<TripStop>();
+            _trackORMAdv = trackORMAdv;
+        }
+
+        public TravelPlan(string sringInput, bool file = true)
+        {
+            TimeTable = new List<TripStop>();
+            _trackORMAdv = new TrackORMAdv(sringInput, file);
         }
 
         public ITravelPlan SettActualTrain(int trainId)
@@ -45,25 +58,54 @@ namespace TrainEngine.Travel
 
         public ITravelPlan ArriveAt(int stationId, string ariveTime)
         {
-            var tripStop = new TripStop();
-            tripStop.StationId = stationId;
-            tripStop.ArrivalTime = TimeSpan.Parse(ariveTime);
-            TimeSpan? departureTime = tripStop.ArrivalTime + TimeSpan.Parse("0:05");
-            tripStop.DepartureTime = departureTime;
-            tripStop.TrainId = Train.Id;
-            TimeTable.Add(tripStop);
-            return this;
+            var lastRecord = TimeTable
+                .FindAll(t => t.TrainId == Train.Id)
+                .OrderBy(t => t.ArrivalTime)
+                .ToList()
+                .Last();
+
+            var minTravelTime = _trackORMAdv.GetMinTravelTime(Train.Id, lastRecord.StationId, stationId);
+
+            if ((TimeSpan.Parse(ariveTime) - lastRecord.DepartureTime) > minTravelTime)
+            {
+                var tripStop = new TripStop();
+                tripStop.StationId = stationId;
+                tripStop.ArrivalTime = TimeSpan.Parse(ariveTime);
+                TimeSpan? departureTime = tripStop.ArrivalTime + TimeSpan.Parse("0:05");
+                tripStop.DepartureTime = departureTime;
+                tripStop.TrainId = Train.Id;
+                TimeTable.Add(tripStop);
+                return this;
+            }
+            throw new ArgumentOutOfRangeException(
+                $"Mininum travel time for train {Train.Id} from station {lastRecord.StationId} " +
+                $"to station {stationId} is {minTravelTime}");
         }
 
         public ITravelPlan DepartureFrom(int stationId, string departureTime)
         {
-            var tripStop = new TripStop();
-            tripStop.StationId = stationId;
-            tripStop.ArrivalTime = null;
-            tripStop.DepartureTime = TimeSpan.Parse(departureTime);
-            tripStop.TrainId = Train.Id;
-            TimeTable.Add(tripStop);
-            return this;
+            var lastRecord = TimeTable
+                .FindAll(t => t.TrainId == Train.Id)
+                .OrderBy(t => t.ArrivalTime)
+                .ToList()
+                .Last();
+
+            var minTravelTime = _trackORMAdv.GetMinTravelTime(Train.Id, lastRecord.StationId, stationId);
+            var ariveTime = TimeSpan.Parse(departureTime) - TimeSpan.Parse("0:05");
+
+            if ((ariveTime - lastRecord.DepartureTime) > minTravelTime)
+            {
+                var tripStop = new TripStop();
+                tripStop.StationId = stationId;
+                tripStop.ArrivalTime = ariveTime;
+                tripStop.DepartureTime = TimeSpan.Parse(departureTime);
+                tripStop.TrainId = Train.Id;
+                TimeTable.Add(tripStop);
+                return this;
+            }
+            throw new ArgumentOutOfRangeException(
+              $"Mininum travel time for train {Train.Id} from station {lastRecord.StationId} " +
+              $"to station {stationId} is {minTravelTime}");
         }
 
         public ITravelPlan GenerateNewPlan(string fileName = "timetable")
@@ -107,8 +149,7 @@ namespace TrainEngine.Travel
 
         public void Simulate(string fakeClock, int timeFastForward)
         {
-            trackORMAdv = new TrackORMAdv();
-            var simulator = new Simulator(TimeTable, fakeClock, timeFastForward, trackORMAdv);
+            var simulator = new Simulator(TimeTable, fakeClock, timeFastForward, _trackORMAdv);
             simulator.Simulate(timeFastForward);
         }
     }

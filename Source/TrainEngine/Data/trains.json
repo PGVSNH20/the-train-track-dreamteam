@@ -36,9 +36,21 @@
   },
 
   {
-    "Id": 2,
+    "Id": 4,
     "Name": "Snabbtåg",
     "MaxSpeed": 120,
+    "Operated": false,
+    "CurrentPassangers": null,
+    "MaxPassengersCount": 0,
+    "IsMoving": false,
+    "CurrentDestination": null,
+    "IsAtStation": false
+  },
+
+  {
+    "Id": 5,
+    "Name": "Snabbtåg",
+    "MaxSpeed": 160,
     "Operated": false,
     "CurrentPassangers": null,
     "MaxPassengersCount": 0,

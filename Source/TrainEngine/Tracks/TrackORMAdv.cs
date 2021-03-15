@@ -23,18 +23,36 @@ namespace TrainEngine.Tracks
             SourceFile = @"Data\traintrack4.txt";
             Read();
             AddTracks();
+            Tracks = Tracks.OrderBy(t => t.StartStation.Id).ToList();
         }
 
-        public TrackORMAdv(string sourceFile)
+        public TrackORMAdv(string sringInput, bool file = true)
         {
-            SourceFile = sourceFile;
-            Read();
+            if (file)
+            {
+                SourceFile = sringInput;
+                Read();
+            }
+            else
+            {
+                Read(false, sringInput);
+            }
+
             AddTracks();
+            Tracks = Tracks.OrderBy(t => t.StartStation.Id).ToList();
         }
 
-        private void Read()
+        private void Read(bool file = true, string trackString = "")
         {
-            string[] dataString = File.ReadAllLines(SourceFile);
+            string[] dataString;
+            if (file)
+            {
+                dataString = File.ReadAllLines(SourceFile);
+            }
+            else
+            {
+                dataString = new string[] { trackString };
+            }
             int longestLineLength = 0;
             foreach (string line in dataString)
                 if (line.Length > longestLineLength)
@@ -476,7 +494,7 @@ namespace TrainEngine.Tracks
                     }
                     else
                     {
-                        var tmpResult = FindTripTracks(currentTrack.EndStation.Id, finishStationId, direction);
+                        var tmpResult = FindTripTracks(currentTrack.StartStation.Id, finishStationId, direction);
                         if (tmpResult != null)
                         {
                             tripTracks.AddRange(tmpResult);
@@ -527,6 +545,15 @@ namespace TrainEngine.Tracks
                 trackLength += track.NumberOfTrackParts * 10;
             }
             return trackLength;
+        }
+
+        public string GetTipDirection(int beginStationId, int finishStationId)
+        {
+            if (FindTripTracks(beginStationId, finishStationId, "to east") != null)
+                return "to east";
+            if (FindTripTracks(beginStationId, finishStationId, "to west") != null)
+                return "to west";
+            return string.Empty;
         }
     }
 }
