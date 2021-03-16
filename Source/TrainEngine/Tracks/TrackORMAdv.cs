@@ -23,18 +23,36 @@ namespace TrainEngine.Tracks
             SourceFile = @"Data\traintrack4.txt";
             Read();
             AddTracks();
+            Tracks = Tracks.OrderBy(t => t.StartStation.Id).ToList();
         }
 
-        public TrackORMAdv(string sourceFile)
+        public TrackORMAdv(string sringInput, bool file = true)
         {
-            SourceFile = sourceFile;
-            Read();
+            if (file)
+            {
+                SourceFile = sringInput;
+                Read();
+            }
+            else
+            {
+                Read(false, sringInput);
+            }
+
             AddTracks();
+            Tracks = Tracks.OrderBy(t => t.StartStation.Id).ToList();
         }
 
-        private void Read()
+        private void Read(bool file = true, string trackString = "")
         {
-            string[] dataString = File.ReadAllLines(SourceFile);
+            string[] dataString;
+            if (file)
+            {
+                dataString = File.ReadAllLines(SourceFile);
+            }
+            else
+            {
+                dataString = new string[] { trackString };
+            }
             int longestLineLength = 0;
             foreach (string line in dataString)
                 if (line.Length > longestLineLength)
@@ -132,7 +150,7 @@ namespace TrainEngine.Tracks
                         }
                         break;
                     }
-                    
+
                     if (trackSymbol == '<')
                     {
                         AddBranchTrack(track);
@@ -156,7 +174,6 @@ namespace TrainEngine.Tracks
             {
                 StartStation = mainTrack.StartStation,
                 NumberOfTrackParts = mainTrack.NumberOfTrackParts + 1,
-
             };
             foreach (var crossing in mainTrack.CrossingsAtTrackPart)
                 branchTrack.CrossingsAtTrackPart.Add(crossing);
@@ -169,7 +186,7 @@ namespace TrainEngine.Tracks
                 };
                 branchTrack.SwitchesAtTrackPart.Add(newRailroudSwitch);
             }
-                
+
             while (branchTrack.EndStation == null)
             {
                 char? trackSymbol = FindNextSymbol(ignorPos);
@@ -345,8 +362,8 @@ namespace TrainEngine.Tracks
         }
 
         public Dictionary<string, TimeSpan> GetLinkMinTravelTimes(
-            int trainId, 
-            int beginStationId, 
+            int trainId,
+            int beginStationId,
             int finishStationId)
         {
             Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
@@ -428,14 +445,11 @@ namespace TrainEngine.Tracks
                 return linkTravelTimes.Reverse().ToDictionary(l => l.Key, l => l.Value);
             }
             return linkTravelTimes;
-
-            
         }
-
 
         private List<Track> FindTripTracks(int beginStationId, int finishStationId, string direction)
         {
-            if (stackOverflowConroller++ > 50)
+            if (stackOverflowConroller++ > 100)
                 return null;
             if (direction == "to east")
             {
@@ -480,7 +494,7 @@ namespace TrainEngine.Tracks
                     }
                     else
                     {
-                        var tmpResult = FindTripTracks(currentTrack.EndStation.Id, finishStationId, direction);
+                        var tmpResult = FindTripTracks(currentTrack.StartStation.Id, finishStationId, direction);
                         if (tmpResult != null)
                         {
                             tripTracks.AddRange(tmpResult);
@@ -518,6 +532,28 @@ namespace TrainEngine.Tracks
                 newLink.NumberOfTrackParts = numberOfTrackParts;
                 return newLink;
             }
+        }
+
+        public int GetTrackLength(int beginStationId, int finishStationId)
+        {
+            var tracks = FindTripTracks(beginStationId, finishStationId, "to east");
+            if (tracks == null)
+                tracks = FindTripTracks(beginStationId, finishStationId, "to west");
+            int trackLength = 0;
+            foreach (var track in tracks)
+            {
+                trackLength += track.NumberOfTrackParts * 10;
+            }
+            return trackLength;
+        }
+
+        public string GetTipDirection(int beginStationId, int finishStationId)
+        {
+            if (FindTripTracks(beginStationId, finishStationId, "to east") != null)
+                return "to east";
+            if (FindTripTracks(beginStationId, finishStationId, "to west") != null)
+                return "to west";
+            return string.Empty;
         }
     }
 }

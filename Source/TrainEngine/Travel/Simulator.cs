@@ -39,37 +39,27 @@ namespace TrainEngine.Travel
 
             foreach (int trainId in trains)
             {
-                var trainTimeTable = new List<TripStop>();
-                trainTimeTable = TimeTable
-                    .FindAll(t => t.TrainId == trainId)
-                    .OrderBy(t => t.DepartureTime)
-                    .ToList();
-
-                var runTrainTask = Task.Run(() => RunTrain(trainId, trainTimeTable, time, timeFastForward));
+                var runTrainTask = Task.Run(() => RunTrain(trainId, time, timeFastForward));
                 trainTasks.Add(runTrainTask);
-
-
-                var beginStation = trainTimeTable[0].StationId;
-                var finishStation = trainTimeTable[trainTimeTable.Count() - 1].StationId;
-
-                var linkTravelTimes = new Dictionary<string, TimeSpan>(TrackORMadv.GetLinkTravelTimes(100, beginStation, finishStation));
 
                 var uppdateLinksInUseTasks = Task.Run(() => UppdateLinksInUse(
                     trainId,
-                    linkTravelTimes,
                     time,
                     timeFastForward
                     ));
                 trainTasks.Add(uppdateLinksInUseTasks);
             }
 
-
-
             Task.WaitAll(trainTasks.ToArray());
         }
-        private void RunTrain(int trainId, List<TripStop> trainTimeTable, TimeSpan fakeClock, int timeFastForward)
-        {
 
+        private void RunTrain(int trainId, TimeSpan fakeClock, int timeFastForward)
+        {
+            var trainTimeTable = new List<TripStop>();
+            trainTimeTable = TimeTable
+                .FindAll(t => t.TrainId == trainId)
+                .OrderBy(t => t.DepartureTime)
+                .ToList();
 
             int waitTime = Convert.ToInt32(((TimeSpan)trainTimeTable[0].DepartureTime - fakeClock).TotalMilliseconds);
             fakeClock += (TimeSpan)trainTimeTable[0].DepartureTime - fakeClock;
@@ -94,45 +84,83 @@ namespace TrainEngine.Travel
                 }
             }
         }
-        private void UppdateLinksInUse(int trainId, Dictionary<string, TimeSpan> linkTravelTimes, TimeSpan fakeClock, int timeFastForward)
+
+        private void UppdateLinksInUse(int trainId, TimeSpan fakeClock, int timeFastForward)
         {
+            var trainTimeTable = new List<TripStop>();
+            trainTimeTable = TimeTable
+                .FindAll(t => t.TrainId == trainId)
+                .OrderBy(t => t.DepartureTime)
+                .ToList();
             LinkInUse previusLink = null;
-            foreach (var link in linkTravelTimes)
+
+            var beginStation = trainTimeTable[0].StationId;
+            var finishStation = trainTimeTable[trainTimeTable.Count() - 1].StationId;
+
+            var tripDirection = TrackORMadv.GetTipDirection(beginStation, finishStation);
+
+            for (var i = 0; i < trainTimeTable.Count() - 1; i++)
             {
-                if (previusLink != null)
+                var trackLenght = TrackORMadv.GetTrackLength(trainTimeTable[i].StationId, trainTimeTable[i + 1].StationId);
+                var travelTime = trainTimeTable[i + 1].ArrivalTime - trainTimeTable[i].DepartureTime;
+                var travelSpeed = Convert.ToInt32(trackLenght / travelTime.Value.TotalHours);
+
+                var linkTravelTimes = new Dictionary<string, TimeSpan>(
+                    TrackORMadv.GetLinkTravelTimes(
+                        travelSpeed,
+                        trainTimeTable[i].StationId,
+                        trainTimeTable[i + 1].StationId));
+
+                foreach (var link in linkTravelTimes)
                 {
+                    if (previusLink != null)
+                    {
+                        lock (LinksInUse)
+                        {
+                            LinksInUse.Remove(previusLink);
+                        }
+                        if (trainTimeTable[i + 1].DepartureTime != null)
+                        {
+                            var stopAtStationTime = Convert.ToInt32((trainTimeTable[i + 1].DepartureTime - trainTimeTable[i + 1].ArrivalTime).Value.Milliseconds);
+                            if (stopAtStationTime > 0)
+                            {
+                                Thread.Sleep(stopAtStationTime / timeFastForward);
+                            }
+                        }
+                    }
+
+                    int waitTime = Convert.ToInt32((link.Value - fakeClock).TotalMilliseconds);
+                    fakeClock += link.Value - fakeClock;
+
+                    var currentLink = new LinkInUse()
+                    {
+                        LinkId = link.Key,
+                        UsedByTrainId = trainId,
+                        Direction = tripDirection
+                    };
+
                     lock (LinksInUse)
                     {
-                        LinksInUse.Remove(previusLink);
+                        if (LinksInUse.Find(l => (l.LinkId == link.Key && l.Direction != tripDirection)) != null)
+                        {
+                            Console.WriteLine($"TRAIN CRASH!!! " +
+                                $"Train {trainId} and train " +
+                                $"{LinksInUse.Find(l => l.LinkId == link.Key).UsedByTrainId} ON LINK {link.Key}");
+                        }
                     }
-                }
-                
-                int waitTime = Convert.ToInt32((link.Value - fakeClock).TotalMilliseconds);
-                fakeClock += link.Value - fakeClock;
 
-                var currentLink = new LinkInUse()
-                {
-                    LinkId = link.Key,
-                    UsedByTrainId = trainId
-                };
+                    lock (LinksInUse)
+                    {
+                        LinksInUse.Add(currentLink);
+                    }
 
-                if (LinksInUse.Find(l => l.LinkId == link.Key) != null)
-                {
-                    Console.WriteLine($"TRAIN CRACH ON LINK {link.Key}");
-                    Console.ReadLine();
-                }
+                    if (waitTime > 0)
+                    {
+                        Thread.Sleep(waitTime / timeFastForward);
+                    }
 
-                lock (LinksInUse)
-                {
-                    LinksInUse.Add(currentLink);
+                    previusLink = currentLink;
                 }
-
-                if (waitTime > 0)
-                {
-                    Thread.Sleep(waitTime / timeFastForward);
-                }
-                
-                previusLink = currentLink;
             }
         }
     }

@@ -1,0 +1,302 @@
+[
+  {
+    "TrainId": 1,
+    "StationId": 1,
+    "DepartureTime": {
+      "Ticks": 368400000000,
+      "Days": 0,
+      "Hours": 10,
+      "Milliseconds": 0,
+      "Minutes": 14,
+      "Seconds": 0,
+      "TotalDays": 0.4263888888888889,
+      "TotalHours": 10.233333333333333,
+      "TotalMilliseconds": 36840000,
+      "TotalMinutes": 614,
+      "TotalSeconds": 36840
+    },
+    "ArrivalTime": null
+  },
+  {
+    "TrainId": 1,
+    "StationId": 13,
+    "DepartureTime": {
+      "Ticks": 426000000000,
+      "Days": 0,
+      "Hours": 11,
+      "Milliseconds": 0,
+      "Minutes": 50,
+      "Seconds": 0,
+      "TotalDays": 0.4930555555555556,
+      "TotalHours": 11.833333333333334,
+      "TotalMilliseconds": 42600000,
+      "TotalMinutes": 710,
+      "TotalSeconds": 42600
+    },
+    "ArrivalTime": {
+      "Ticks": 423000000000,
+      "Days": 0,
+      "Hours": 11,
+      "Milliseconds": 0,
+      "Minutes": 45,
+      "Seconds": 0,
+      "TotalDays": 0.4895833333333333,
+      "TotalHours": 11.75,
+      "TotalMilliseconds": 42300000,
+      "TotalMinutes": 705,
+      "TotalSeconds": 42300
+    }
+  },
+  {
+    "TrainId": 1,
+    "StationId": 16,
+    "DepartureTime": {
+      "Ticks": 498000000000,
+      "Days": 0,
+      "Hours": 13,
+      "Milliseconds": 0,
+      "Minutes": 50,
+      "Seconds": 0,
+      "TotalDays": 0.5763888888888888,
+      "TotalHours": 13.833333333333334,
+      "TotalMilliseconds": 49800000,
+      "TotalMinutes": 830,
+      "TotalSeconds": 49800
+    },
+    "ArrivalTime": {
+      "Ticks": 495000000000,
+      "Days": 0,
+      "Hours": 13,
+      "Milliseconds": 0,
+      "Minutes": 45,
+      "Seconds": 0,
+      "TotalDays": 0.5729166666666666,
+      "TotalHours": 13.75,
+      "TotalMilliseconds": 49500000,
+      "TotalMinutes": 825,
+      "TotalSeconds": 49500
+    }
+  },
+  {
+    "TrainId": 2,
+    "StationId": 1,
+    "DepartureTime": {
+      "Ticks": 375000000000,
+      "Days": 0,
+      "Hours": 10,
+      "Milliseconds": 0,
+      "Minutes": 25,
+      "Seconds": 0,
+      "TotalDays": 0.4340277777777778,
+      "TotalHours": 10.416666666666666,
+      "TotalMilliseconds": 37500000,
+      "TotalMinutes": 625,
+      "TotalSeconds": 37500
+    },
+    "ArrivalTime": null
+  },
+  {
+    "TrainId": 2,
+    "StationId": 3,
+    "DepartureTime": {
+      "Ticks": 432000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 0,
+      "Seconds": 0,
+      "TotalDays": 0.5,
+      "TotalHours": 12,
+      "TotalMilliseconds": 43200000,
+      "TotalMinutes": 720,
+      "TotalSeconds": 43200
+    },
+    "ArrivalTime": {
+      "Ticks": 429000000000,
+      "Days": 0,
+      "Hours": 11,
+      "Milliseconds": 0,
+      "Minutes": 55,
+      "Seconds": 0,
+      "TotalDays": 0.4965277777777778,
+      "TotalHours": 11.916666666666666,
+      "TotalMilliseconds": 42900000,
+      "TotalMinutes": 715,
+      "TotalSeconds": 42900
+    }
+  },
+  {
+    "TrainId": 2,
+    "StationId": 6,
+    "DepartureTime": {
+      "Ticks": 456000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 40,
+      "Seconds": 0,
+      "TotalDays": 0.5277777777777778,
+      "TotalHours": 12.666666666666666,
+      "TotalMilliseconds": 45600000,
+      "TotalMinutes": 760,
+      "TotalSeconds": 45600
+    },
+    "ArrivalTime": {
+      "Ticks": 453000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 35,
+      "Seconds": 0,
+      "TotalDays": 0.5243055555555556,
+      "TotalHours": 12.583333333333334,
+      "TotalMilliseconds": 45300000,
+      "TotalMinutes": 755,
+      "TotalSeconds": 45300
+    }
+  },
+  {
+    "TrainId": 3,
+    "StationId": 3,
+    "DepartureTime": {
+      "Ticks": 423000000000,
+      "Days": 0,
+      "Hours": 11,
+      "Milliseconds": 0,
+      "Minutes": 45,
+      "Seconds": 0,
+      "TotalDays": 0.4895833333333333,
+      "TotalHours": 11.75,
+      "TotalMilliseconds": 42300000,
+      "TotalMinutes": 705,
+      "TotalSeconds": 42300
+    },
+    "ArrivalTime": null
+  },
+  {
+    "TrainId": 3,
+    "StationId": 6,
+    "DepartureTime": {
+      "Ticks": 456000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 40,
+      "Seconds": 0,
+      "TotalDays": 0.5277777777777778,
+      "TotalHours": 12.666666666666666,
+      "TotalMilliseconds": 45600000,
+      "TotalMinutes": 760,
+      "TotalSeconds": 45600
+    },
+    "ArrivalTime": {
+      "Ticks": 453000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 35,
+      "Seconds": 0,
+      "TotalDays": 0.5243055555555556,
+      "TotalHours": 12.583333333333334,
+      "TotalMilliseconds": 45300000,
+      "TotalMinutes": 755,
+      "TotalSeconds": 45300
+    }
+  },
+  {
+    "TrainId": 4,
+    "StationId": 6,
+    "DepartureTime": {
+      "Ticks": 390000000000,
+      "Days": 0,
+      "Hours": 10,
+      "Milliseconds": 0,
+      "Minutes": 50,
+      "Seconds": 0,
+      "TotalDays": 0.4513888888888889,
+      "TotalHours": 10.833333333333334,
+      "TotalMilliseconds": 39000000,
+      "TotalMinutes": 650,
+      "TotalSeconds": 39000
+    },
+    "ArrivalTime": null
+  },
+  {
+    "TrainId": 4,
+    "StationId": 2,
+    "DepartureTime": {
+      "Ticks": 456000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 40,
+      "Seconds": 0,
+      "TotalDays": 0.5277777777777778,
+      "TotalHours": 12.666666666666666,
+      "TotalMilliseconds": 45600000,
+      "TotalMinutes": 760,
+      "TotalSeconds": 45600
+    },
+    "ArrivalTime": {
+      "Ticks": 453000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 35,
+      "Seconds": 0,
+      "TotalDays": 0.5243055555555556,
+      "TotalHours": 12.583333333333334,
+      "TotalMilliseconds": 45300000,
+      "TotalMinutes": 755,
+      "TotalSeconds": 45300
+    }
+  },
+  {
+    "TrainId": 5,
+    "StationId": 16,
+    "DepartureTime": {
+      "Ticks": 423000000000,
+      "Days": 0,
+      "Hours": 11,
+      "Milliseconds": 0,
+      "Minutes": 45,
+      "Seconds": 0,
+      "TotalDays": 0.4895833333333333,
+      "TotalHours": 11.75,
+      "TotalMilliseconds": 42300000,
+      "TotalMinutes": 705,
+      "TotalSeconds": 42300
+    },
+    "ArrivalTime": null
+  },
+  {
+    "TrainId": 5,
+    "StationId": 14,
+    "DepartureTime": {
+      "Ticks": 456000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 40,
+      "Seconds": 0,
+      "TotalDays": 0.5277777777777778,
+      "TotalHours": 12.666666666666666,
+      "TotalMilliseconds": 45600000,
+      "TotalMinutes": 760,
+      "TotalSeconds": 45600
+    },
+    "ArrivalTime": {
+      "Ticks": 453000000000,
+      "Days": 0,
+      "Hours": 12,
+      "Milliseconds": 0,
+      "Minutes": 35,
+      "Seconds": 0,
+      "TotalDays": 0.5243055555555556,
+      "TotalHours": 12.583333333333334,
+      "TotalMilliseconds": 45300000,
+      "TotalMinutes": 755,
+      "TotalSeconds": 45300
+    }
+  }
+]

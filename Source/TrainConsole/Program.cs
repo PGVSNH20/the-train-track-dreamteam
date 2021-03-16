@@ -11,6 +11,12 @@ namespace TrainConsole
     {
         private static void Main(string[] args)
         {
+            string track = "*[11]---[22]----[33]";
+            var trackOrm = new TrackORMAdv(track, false);
+
+            // Act
+            var result = trackOrm.Tracks;
+
             Console.WriteLine("Train track!");
             // Step 1:
             // Parse the traintrack (Data/traintrack.txt) using ORM (see suggested code)
@@ -21,7 +27,6 @@ namespace TrainConsole
 
             var foo = trainTracks.GetTravelTime(60, 4, 8);
             var foo2 = trainTracks.GetLinkTravelTimes(60, 4, 8);
-
 
             //var foo = new TravelPlan().SettActualTrain(2).StartAt(3, "11:03").ArriveAt(5, "12:00");
             //foo.GenerateNewPlan("timetable_20210312");
@@ -34,14 +39,13 @@ namespace TrainConsole
             //});
             //foo.Write();
 
-
-
             var travelPlan = new TravelPlan().SettActualTrain(1).StartAt(1, "10:14").ArriveAt(13, "11:45").ArriveAt(16, "13:45");
-            travelPlan.SettActualTrain(2).StartAt(2, "10:25").ArriveAt(3, "11:55").ArriveAt(6, "12:35");
+            travelPlan.SettActualTrain(2).StartAt(1, "10:25").ArriveAt(3, "11:55").ArriveAt(6, "12:35");
             travelPlan.SettActualTrain(3).StartAt(3, "11:45").ArriveAt(6, "12:35");
-            travelPlan.Simulate("10:00", 300);
-
-
+            travelPlan.SettActualTrain(4).StartAt(6, "10:50").ArriveAt(2, "12:35");
+            travelPlan.SettActualTrain(5).StartAt(16, "11:45").ArriveAt(14, "12:35");
+            travelPlan.GenerateNewPlan("5trains_20210315");
+            travelPlan.Simulate("10:00", 1000);
 
             // Step 2:
             // Make the trains run in treads
