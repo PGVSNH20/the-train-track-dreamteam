@@ -11,19 +11,16 @@ namespace TrainConsole
     {
         private static void Main(string[] args)
         {
-            string track = "*[11]---[22]----[33]";
-            var trackOrm = new TrackORMAdv(track, false);
-
-            // Act
-            var result = trackOrm.Tracks;
-
+            
             Console.WriteLine("Train track!");
             // Step 1:
             // Parse the traintrack (Data/traintrack.txt) using ORM (see suggested code)
             // Parse the trains (Data/trains.txt)
 
-            var trainTracks = new TrackORMAdv(@"Data\traintrack4.txt");
+            var trainTracks = new TrackORMAdv(@"Data\traintrack3.txt");
             //trainTracks.PrintTrackMap();
+
+            trainTracks.PrintTrackMap();
 
             var foo = trainTracks.GetTravelTime(60, 4, 8);
             var foo2 = trainTracks.GetLinkTravelTimes(60, 4, 8);
