@@ -1,156 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
-using System.Threading;
-using System.Threading.Tasks;
 using TrainEngine.Tracks;
 using TrainEngine.Trains;
 
 namespace TrainEngine.Travel
 {
-    public class TravelPlan : ITravelPlan
+    class TravelPlan : ITravelPlan
     {
         public List<TripStop> TimeTable { get; set; }
 
         public Train Train { get; set; }
 
-        private TrackORMAdv _trackORMAdv { get; set; }
+        private TrackORM _trackORM { get; set; }
 
         public TravelPlan()
         {
-            TimeTable = new List<TripStop>();
-            _trackORMAdv = new TrackORMAdv();
+            _trackORM = new TrackORM();
+
         }
 
-        public TravelPlan(TrackORMAdv trackORMAdv)
+
+        public ITravelPlan AddToExistingPlan(string fileName)
         {
-            TimeTable = new List<TripStop>();
-            _trackORMAdv = trackORMAdv;
+            throw new NotImplementedException();
         }
 
-        public TravelPlan(string sringInput, bool file = true)
+        public ITravelPlan ArriveAt(int stationId, TimeSpan ariveTime)
         {
-            TimeTable = new List<TripStop>();
-            _trackORMAdv = new TrackORMAdv(sringInput, file);
+            TripStop tripstop = new TripStop();
+            tripstop.StationId = stationId;
+        }
+
+        public ITravelPlan GenerateNewPlan(string fileName)
+        {
+            throw new NotImplementedException();
         }
 
         public ITravelPlan SettActualTrain(int trainId)
         {
-            var train = new Train(trainId);
-            Train = train;
-            return this;
-        }
-
-        public ITravelPlan StartAt(int stationId, string departureTime)
-        {
-            var tripStop = new TripStop();
-            tripStop.StationId = stationId;
-            tripStop.DepartureTime = TimeSpan.Parse(departureTime);
-            tripStop.TrainId = Train.Id;
-            TimeTable.Add(tripStop);
-            return this;
-        }
-
-        public ITravelPlan ArriveAt(int stationId, string ariveTime)
-        {
-            var lastRecord = TimeTable
-                .FindAll(t => t.TrainId == Train.Id)
-                .OrderBy(t => t.ArrivalTime)
-                .ToList()
-                .Last();
-
-            var minTravelTime = _trackORMAdv.GetMinTravelTime(Train.Id, lastRecord.StationId, stationId);
-
-            if ((TimeSpan.Parse(ariveTime) - lastRecord.DepartureTime) > minTravelTime)
-            {
-                var tripStop = new TripStop();
-                tripStop.StationId = stationId;
-                tripStop.ArrivalTime = TimeSpan.Parse(ariveTime);
-                TimeSpan? departureTime = tripStop.ArrivalTime + TimeSpan.Parse("0:05");
-                tripStop.DepartureTime = departureTime;
-                tripStop.TrainId = Train.Id;
-                TimeTable.Add(tripStop);
-                return this;
-            }
-            throw new ArgumentOutOfRangeException(
-                $"Mininum travel time for train {Train.Id} from station {lastRecord.StationId} " +
-                $"to station {stationId} is {minTravelTime}");
-        }
-
-        public ITravelPlan DepartureFrom(int stationId, string departureTime)
-        {
-            var lastRecord = TimeTable
-                .FindAll(t => t.TrainId == Train.Id)
-                .OrderBy(t => t.ArrivalTime)
-                .ToList()
-                .Last();
-
-            var minTravelTime = _trackORMAdv.GetMinTravelTime(Train.Id, lastRecord.StationId, stationId);
-            var ariveTime = TimeSpan.Parse(departureTime) - TimeSpan.Parse("0:05");
-
-            if ((ariveTime - lastRecord.DepartureTime) > minTravelTime)
-            {
-                var tripStop = new TripStop();
-                tripStop.StationId = stationId;
-                tripStop.ArrivalTime = ariveTime;
-                tripStop.DepartureTime = TimeSpan.Parse(departureTime);
-                tripStop.TrainId = Train.Id;
-                TimeTable.Add(tripStop);
-                return this;
-            }
-            throw new ArgumentOutOfRangeException(
-              $"Mininum travel time for train {Train.Id} from station {lastRecord.StationId} " +
-              $"to station {stationId} is {minTravelTime}");
-        }
-
-        public ITravelPlan GenerateNewPlan(string fileName = "timetable")
-        {
-            Write(fileName);
-            return this;
-        }
-
-        public ITravelPlan AddToExistingPlan(string fileName = "timetable")
-        {
-            var tmpTimeTable = new List<TripStop>();
-            tmpTimeTable.AddRange(TimeTable);
-            Read(fileName);
-            TimeTable.AddRange(tmpTimeTable);
-            Write(fileName);
-            return this;
-        }
-
-        public ITravelPlan LoadPlan(string fileName = "timetable")
-        {
-            Read(fileName);
-            return this;
-        }
-
-        private void Read(string fileName)
-        {
-            var jsonString = File.ReadAllText($"Data/{fileName}.json");
-            TimeTable = JsonSerializer.Deserialize<List<TripStop>>(jsonString);
-        }
-
-        private void Write(string fileName)
-        {
-            var options = new JsonSerializerOptions
-            {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
-                WriteIndented = true
-            };
-            string jsonString = JsonSerializer.Serialize(TimeTable, options);
-            File.WriteAllText($"Data/{fileName}.json", jsonString);
+            throw new NotImplementedException();
         }
 
         public void Simulate(string fakeClock, int timeFastForward)
         {
-            var simulator = new Simulator(TimeTable, fakeClock, timeFastForward, _trackORMAdv);
-            simulator.Simulate(timeFastForward);
+            throw new NotImplementedException();
+        }
+
+        public ITravelPlan StartAt(int stationId, string departureTime)
+        {
+            throw new NotImplementedException();
         }
     }
 }

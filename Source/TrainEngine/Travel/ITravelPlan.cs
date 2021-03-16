@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TrainEngine.Tracks;
 using TrainEngine.Trains;
 
 namespace TrainEngine.Travel
@@ -21,8 +20,6 @@ namespace TrainEngine.Travel
         ITravelPlan GenerateNewPlan(string fileName);
 
         public ITravelPlan AddToExistingPlan(string fileName);
-
-        ITravelPlan LoadPlan(string fileName);
 
         void Simulate(string fakeClock, int timeFastForward);
     }
