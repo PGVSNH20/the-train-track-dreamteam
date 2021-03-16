@@ -32,8 +32,19 @@ trackORM.GetTravelTime(speed, beginStationId, finishStationId)
 trackORM.GetTrackLength(beginStationId, finishStationId)
 
 // gets trip direction
-trackORM.GetTipDirection(beginStationId, finishStationId)
+trackORM.GetTripDirection(beginStationId, finishStationId)
 ```
 ### Train ORM
+Handls data related to Trains:
+* Reads from file
+* Writes to file
+* Contains methods related to train information
 ### Station ORM
+Handls data related to Trains:
+* Reads from file
+* Writes to file
 ### Travel Plan
+Handls data related to Travel plan:
+* Reads from file
+* Writes to file
+* Contains methods related to travel plan:
