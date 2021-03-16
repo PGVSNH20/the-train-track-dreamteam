@@ -18,6 +18,7 @@ namespace TrainEngine.Tracks
             CreateTracks();
         }
 
+
         private void Read()
         {
             string[] line = File.ReadAllLines("Data/traintrack2.txt");
@@ -25,6 +26,22 @@ namespace TrainEngine.Tracks
             for (var i = 0; i < TrackMap.Length; i++)
             {
                 TrackMap[i] = Convert.ToChar(line[0][i]);
+            }
+        }
+
+        public TrackORM(string inputLine)
+        {
+            Read(inputLine);
+            Tracks = new List<Track>();
+            CreateTracks();
+        }
+
+        private void Read(string inputLine)
+        {
+            TrackMap = new char[inputLine.Length];
+            for (var i = 0; i < TrackMap.Length; i++)
+            {
+                TrackMap[i] = Convert.ToChar(inputLine[i]);
             }
         }
 

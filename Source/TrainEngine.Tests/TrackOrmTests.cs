@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TrainEngine.Tracks;
 using Xunit;
 
@@ -66,6 +67,15 @@ namespace TrainEngine.Tests
 
             // Assert
             Assert.Equal(19, result.Count);
+        }
+        [Fact]
+        public void Test_Track()
+        {
+            //Arrange
+            var track = new TrackORM("*[1]-------[3]");
+
+            Assert.Single(track.Tracks);
+
         }
     }
 }
