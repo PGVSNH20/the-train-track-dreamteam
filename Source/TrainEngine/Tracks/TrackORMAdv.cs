@@ -547,7 +547,7 @@ namespace TrainEngine.Tracks
             return trackLength;
         }
 
-        public string GetTipDirection(int beginStationId, int finishStationId)
+        public string GetTripDirection(int beginStationId, int finishStationId)
         {
             if (FindTripTracks(beginStationId, finishStationId, "to east") != null)
                 return "to east";

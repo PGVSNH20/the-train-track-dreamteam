@@ -20,7 +20,8 @@ namespace TrainConsole
             var trainTracks = new TrackORMAdv(@"Data\traintrack3.txt");
             //trainTracks.PrintTrackMap();
 
-            trainTracks.PrintTrackMap();
+            var fo = trainTracks.GetTripDirection(3, 4);
+
 
             var foo = trainTracks.GetTravelTime(60, 4, 8);
             var foo2 = trainTracks.GetLinkTravelTimes(60, 4, 8);

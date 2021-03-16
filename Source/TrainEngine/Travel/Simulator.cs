@@ -97,7 +97,7 @@ namespace TrainEngine.Travel
             var beginStation = trainTimeTable[0].StationId;
             var finishStation = trainTimeTable[trainTimeTable.Count() - 1].StationId;
 
-            var tripDirection = TrackORMadv.GetTipDirection(beginStation, finishStation);
+            var tripDirection = TrackORMadv.GetTripDirection(beginStation, finishStation);
 
             for (var i = 0; i < trainTimeTable.Count() - 1; i++)
             {
