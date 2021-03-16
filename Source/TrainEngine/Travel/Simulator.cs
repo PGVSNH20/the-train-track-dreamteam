@@ -101,7 +101,7 @@ namespace TrainEngine.Travel
 
             for (var i = 0; i < trainTimeTable.Count() - 1; i++)
             {
-                var trackLenght = TrackORMadv.GetTrackLength(trainTimeTable[i].StationId, trainTimeTable[i + 1].StationId);
+                var trackLenght = TrackORMadv.GetTripLength(trainTimeTable[i].StationId, trainTimeTable[i + 1].StationId);
                 var travelTime = trainTimeTable[i + 1].ArrivalTime - trainTimeTable[i].DepartureTime;
                 var travelSpeed = Convert.ToInt32(trackLenght / travelTime.Value.TotalHours);
 

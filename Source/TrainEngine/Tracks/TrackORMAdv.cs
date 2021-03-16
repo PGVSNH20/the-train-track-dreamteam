@@ -21,8 +21,8 @@ namespace TrainEngine.Tracks
         public TrackORMAdv()
         {
             SourceFile = @"Data\traintrack4.txt";
-            Read();
-            AddTracks();
+            _Read();
+            _AddTracks();
             Tracks = Tracks.OrderBy(t => t.StartStation.Id).ToList();
         }
 
@@ -31,18 +31,149 @@ namespace TrainEngine.Tracks
             if (file)
             {
                 SourceFile = sringInput;
-                Read();
+                _Read();
             }
             else
             {
-                Read(false, sringInput);
+                _Read(false, sringInput);
             }
 
-            AddTracks();
+            _AddTracks();
             Tracks = Tracks.OrderBy(t => t.StartStation.Id).ToList();
         }
 
-        private void Read(bool file = true, string trackString = "")
+        //public methods
+
+        public int GetTripLength(int beginStationId, int finishStationId)
+        {
+            var tracks = _FindTripTracks(beginStationId, finishStationId, "to east");
+            if (tracks == null)
+                tracks = _FindTripTracks(beginStationId, finishStationId, "to west");
+            int trackLength = 0;
+            foreach (var track in tracks)
+            {
+                trackLength += track.NumberOfTrackParts * 10;
+            }
+            return trackLength;
+        }
+
+        public string GetTripDirection(int beginStationId, int finishStationId)
+        {
+            if (_FindTripTracks(beginStationId, finishStationId, "to east") != null)
+                return "to east";
+            if (_FindTripTracks(beginStationId, finishStationId, "to west") != null)
+                return "to west";
+            return string.Empty;
+        }
+
+        public TimeSpan GetMinTravelTime(int trainId, int beginStationId, int finishStationId)
+        {
+            var direction = "to east";
+            var tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            if (tripTracks == null)
+            {
+                direction = "to west";
+                tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            }
+
+            var trains = new TrainsOrm();
+            var maxSpeed = trains.GetTrainById(trainId).MaxSpeed;
+            double tripLengh = tripTracks.Sum(t => t.NumberOfTrackParts) * 10;
+            double hours = tripLengh / maxSpeed;
+            var minTravelTime = TimeSpan.FromHours(hours);
+
+            return minTravelTime;
+        }
+
+        public Dictionary<string, TimeSpan> GetLinkMinTravelTimes(
+            int trainId,
+            int beginStationId,
+            int finishStationId)
+        {
+            Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
+            var trains = new TrainsOrm();
+            var maxSpeed = trains.GetTrainById(trainId).MaxSpeed;
+
+            var direction = "to east";
+            var tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            if (tripTracks == null)
+            {
+                direction = "to west";
+                tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            }
+
+            foreach (var tripTrack in tripTracks)
+            {
+                foreach (var link in tripTrack.TrackLinks)
+                {
+                    double linkLenghs = link.NumberOfTrackParts * 10;
+                    double travelTimeInHours = linkLenghs / maxSpeed;
+                    var minTravelTime = TimeSpan.FromHours(travelTimeInHours);
+                    linkTravelTimes.Add(link.LinkId, minTravelTime);
+                }
+            }
+            if (direction == "to west")
+                linkTravelTimes.Reverse();
+            return linkTravelTimes;
+        }
+
+        public TimeSpan GetTravelTime(int speed, int beginStationId, int finishStationId)
+        {
+            var direction = "to east";
+            var tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            if (tripTracks == null)
+            {
+                direction = "to west";
+                tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            }
+
+            var trains = new TrainsOrm();
+            double tripLengh = tripTracks.Sum(t => t.NumberOfTrackParts) * 10;
+            double hours = tripLengh / speed;
+            var minTravelTime = TimeSpan.FromHours(hours);
+
+            return minTravelTime;
+        }
+
+        public Dictionary<string, TimeSpan> GetLinkTravelTimes(int speed, int beginStationId, int finishStationId)
+        {
+            Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
+
+            var direction = "to east";
+            stackOverflowConroller = 0;
+            var tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            if (tripTracks == null)
+            {
+                direction = "to west";
+                stackOverflowConroller = 0;
+                tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            }
+            if (tripTracks == null)
+            {
+                Console.WriteLine($"No possible trip with stat at station {beginStationId} and end at station {finishStationId}");
+                return null;
+            }
+            foreach (var tripTrack in tripTracks)
+            {
+                foreach (var link in tripTrack.TrackLinks)
+                {
+                    double linkLenghs = link.NumberOfTrackParts * 10;
+                    double travelTimeInHours = linkLenghs / speed;
+                    var minTravelTime = TimeSpan.FromHours(travelTimeInHours);
+                    linkTravelTimes.Add(link.LinkId, minTravelTime);
+                }
+            }
+
+            if (direction == "to west")
+            {
+                return linkTravelTimes.Reverse().ToDictionary(l => l.Key, l => l.Value);
+            }
+            return linkTravelTimes;
+        }
+
+        //internal methods
+
+        private void _Read(bool file = true, string trackString = "")
         {
             string[] dataString;
             if (file)
@@ -51,7 +182,7 @@ namespace TrainEngine.Tracks
             }
             else
             {
-                dataString = new string[] { trackString };
+                dataString = trackString.Split(";");
             }
             int longestLineLength = 0;
             foreach (string line in dataString)
@@ -74,7 +205,7 @@ namespace TrainEngine.Tracks
             }
         }
 
-        public void PrintTrackMap()
+        public void _PrintTrackMap()
         {
             Console.Write($"|x,y");
             for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
@@ -103,14 +234,14 @@ namespace TrainEngine.Tracks
             }
         }
 
-        private void AddTracks()
+        private void _AddTracks()
         {
             var track = new Track();
             while (track.EndStation == null)
             {
-                char? trackSymbol = FindNextSymbol();
+                char? trackSymbol = _FindNextSymbol();
 
-                if (IsTrackPart(trackSymbol))
+                if (_IsTrackPart(trackSymbol))
                     track.NumberOfTrackParts++;
 
                 if (trackSymbol == '=')
@@ -118,12 +249,12 @@ namespace TrainEngine.Tracks
 
                 while (track.StartStation == null)
                 {
-                    track.StartStation = AddStartStation(trackSymbol);
+                    track.StartStation = _AddStartStation(trackSymbol);
                 }
                 while (trackSymbol != null)
                 {
-                    trackSymbol = FindNextSymbol();
-                    if (IsTrackPart(trackSymbol))
+                    trackSymbol = _FindNextSymbol();
+                    if (_IsTrackPart(trackSymbol))
                         track.NumberOfTrackParts++;
 
                     if (trackSymbol == '=')
@@ -142,30 +273,30 @@ namespace TrainEngine.Tracks
                     if (trackSymbol == '[')
                     {
                         var startPos = _prevPos;
-                        track.EndStation = AddEndStation(trackSymbol);
+                        track.EndStation = _AddEndStation(trackSymbol);
                         if (!track.EndStation.IsEndStation)
                         {
                             _currentPos = startPos;
-                            AddTracks();
+                            _AddTracks();
                         }
                         break;
                     }
 
                     if (trackSymbol == '<')
                     {
-                        AddBranchTrack(track);
+                        _AddBranchTrack(track);
                     }
                 }
             }
-            track.TrackLinks = FindTrackLinks(track);
+            track.TrackLinks = _FindTrackLinks(track);
             Tracks.Add(track);
         }
 
-        private void AddBranchTrack(Track mainTrack)
+        private void _AddBranchTrack(Track mainTrack)
         {
             var savedPrevPos = _prevPos;
             var savedCurrentPos = _currentPos;
-            FindNextSymbol();
+            _FindNextSymbol();
             var ignorPos = _currentPos;
             _prevPos = savedCurrentPos;
             _currentPos = savedCurrentPos;
@@ -189,11 +320,11 @@ namespace TrainEngine.Tracks
 
             while (branchTrack.EndStation == null)
             {
-                char? trackSymbol = FindNextSymbol(ignorPos);
+                char? trackSymbol = _FindNextSymbol(ignorPos);
                 while (trackSymbol != null)
                 {
-                    trackSymbol = FindNextSymbol();
-                    if (IsTrackPart(trackSymbol))
+                    trackSymbol = _FindNextSymbol();
+                    if (_IsTrackPart(trackSymbol))
                         branchTrack.NumberOfTrackParts++;
                     if (trackSymbol == '=')
                         branchTrack.CrossingsAtTrackPart.Add(branchTrack.NumberOfTrackParts);
@@ -211,28 +342,28 @@ namespace TrainEngine.Tracks
                     {
                         var startPos = _prevPos;
                         var endPos = _currentPos;
-                        branchTrack.EndStation = AddEndStation(trackSymbol);
+                        branchTrack.EndStation = _AddEndStation(trackSymbol);
                         if (!branchTrack.EndStation.IsEndStation)
                         {
                             _currentPos = startPos;
-                            AddTracks();
+                            _AddTracks();
                         }
                         _currentPos = endPos;
                         break;
                     }
                     if (trackSymbol == '<')
                     {
-                        AddBranchTrack(branchTrack);
+                        _AddBranchTrack(branchTrack);
                     }
                 }
             }
-            branchTrack.TrackLinks = FindTrackLinks(branchTrack);
+            branchTrack.TrackLinks = _FindTrackLinks(branchTrack);
             Tracks.Add(branchTrack);
             _prevPos = savedPrevPos;
             _currentPos = savedCurrentPos;
         }
 
-        private bool IsTrackPart(char? scanResult)
+        private bool _IsTrackPart(char? scanResult)
         {
             if (scanResult == '-' ||
                 scanResult == '>' ||
@@ -244,18 +375,18 @@ namespace TrainEngine.Tracks
             return false;
         }
 
-        private Station AddEndStation(char? scanResult)
+        private Station _AddEndStation(char? scanResult)
         {
             var station = new Station();
             string stationId = string.Empty;
             while (scanResult != ']')
             {
-                scanResult = FindNextSymbol();
+                scanResult = _FindNextSymbol();
                 if (scanResult == ']')
                 {
                     var savedPrevPos = _prevPos;
                     var savedCurrentPos = _currentPos;
-                    scanResult = FindNextSymbol();
+                    scanResult = _FindNextSymbol();
                     if (scanResult == null)
                     {
                         station.IsEndStation = true;
@@ -271,7 +402,7 @@ namespace TrainEngine.Tracks
             return station;
         }
 
-        private Station AddStartStation(char? scanResult)
+        private Station _AddStartStation(char? scanResult)
         {
             var station = new Station();
             string stationId = string.Empty;
@@ -281,7 +412,7 @@ namespace TrainEngine.Tracks
 
             while (scanResult != ']')
             {
-                scanResult = FindNextSymbol();
+                scanResult = _FindNextSymbol();
                 if (scanResult == ']')
                     break;
                 stationId += scanResult.ToString();
@@ -290,7 +421,7 @@ namespace TrainEngine.Tracks
             return station;
         }
 
-        private char? FindNextSymbol((int x, int y)? ignorPosition = null)
+        private char? _FindNextSymbol((int x, int y)? ignorPosition = null)
         {
             (int x, int y) pOld = _prevPos;
             (int x, int y) p = _currentPos;
@@ -342,112 +473,7 @@ namespace TrainEngine.Tracks
             }
         }
 
-        public TimeSpan GetMinTravelTime(int trainId, int beginStationId, int finishStationId)
-        {
-            var direction = "to east";
-            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
-            if (tripTracks == null)
-            {
-                direction = "to west";
-                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
-            }
-
-            var trains = new TrainsOrm();
-            var maxSpeed = trains.GetTrainById(trainId).MaxSpeed;
-            double tripLengh = tripTracks.Sum(t => t.NumberOfTrackParts) * 10;
-            double hours = tripLengh / maxSpeed;
-            var minTravelTime = TimeSpan.FromHours(hours);
-
-            return minTravelTime;
-        }
-
-        public Dictionary<string, TimeSpan> GetLinkMinTravelTimes(
-            int trainId,
-            int beginStationId,
-            int finishStationId)
-        {
-            Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
-            var trains = new TrainsOrm();
-            var maxSpeed = trains.GetTrainById(trainId).MaxSpeed;
-
-            var direction = "to east";
-            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
-            if (tripTracks == null)
-            {
-                direction = "to west";
-                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
-            }
-
-            foreach (var tripTrack in tripTracks)
-            {
-                foreach (var link in tripTrack.TrackLinks)
-                {
-                    double linkLenghs = link.NumberOfTrackParts * 10;
-                    double travelTimeInHours = linkLenghs / maxSpeed;
-                    var minTravelTime = TimeSpan.FromHours(travelTimeInHours);
-                    linkTravelTimes.Add(link.LinkId, minTravelTime);
-                }
-            }
-            if (direction == "to west")
-                linkTravelTimes.Reverse();
-            return linkTravelTimes;
-        }
-
-        public TimeSpan GetTravelTime(int speed, int beginStationId, int finishStationId)
-        {
-            var direction = "to east";
-            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
-            if (tripTracks == null)
-            {
-                direction = "to west";
-                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
-            }
-
-            var trains = new TrainsOrm();
-            double tripLengh = tripTracks.Sum(t => t.NumberOfTrackParts) * 10;
-            double hours = tripLengh / speed;
-            var minTravelTime = TimeSpan.FromHours(hours);
-
-            return minTravelTime;
-        }
-
-        public Dictionary<string, TimeSpan> GetLinkTravelTimes(int speed, int beginStationId, int finishStationId)
-        {
-            Dictionary<string, TimeSpan> linkTravelTimes = new Dictionary<string, TimeSpan>();
-
-            var direction = "to east";
-            stackOverflowConroller = 0;
-            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
-            if (tripTracks == null)
-            {
-                direction = "to west";
-                stackOverflowConroller = 0;
-                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
-            }
-            if (tripTracks == null)
-            {
-                Console.WriteLine($"No possible trip with stat at station {beginStationId} and end at station {finishStationId}");
-                return null;
-            }
-            foreach (var tripTrack in tripTracks)
-            {
-                foreach (var link in tripTrack.TrackLinks)
-                {
-                    double linkLenghs = link.NumberOfTrackParts * 10;
-                    double travelTimeInHours = linkLenghs / speed;
-                    var minTravelTime = TimeSpan.FromHours(travelTimeInHours);
-                    linkTravelTimes.Add(link.LinkId, minTravelTime);
-                }
-            }
-
-            if (direction == "to west")
-            {
-                return linkTravelTimes.Reverse().ToDictionary(l => l.Key, l => l.Value);
-            }
-            return linkTravelTimes;
-        }
-
-        private List<Track> FindTripTracks(int beginStationId, int finishStationId, string direction)
+        private List<Track> _FindTripTracks(int beginStationId, int finishStationId, string direction)
         {
             if (stackOverflowConroller++ > 100)
                 return null;
@@ -468,7 +494,7 @@ namespace TrainEngine.Tracks
                     }
                     else
                     {
-                        var tmpResult = FindTripTracks(currentTrack.EndStation.Id, finishStationId, direction);
+                        var tmpResult = _FindTripTracks(currentTrack.EndStation.Id, finishStationId, direction);
                         if (tmpResult != null)
                         {
                             tripTracks.AddRange(tmpResult);
@@ -494,7 +520,7 @@ namespace TrainEngine.Tracks
                     }
                     else
                     {
-                        var tmpResult = FindTripTracks(currentTrack.StartStation.Id, finishStationId, direction);
+                        var tmpResult = _FindTripTracks(currentTrack.StartStation.Id, finishStationId, direction);
                         if (tmpResult != null)
                         {
                             tripTracks.AddRange(tmpResult);
@@ -507,7 +533,7 @@ namespace TrainEngine.Tracks
             return null;
         }
 
-        private List<Link> FindTrackLinks(Track track)
+        private List<Link> _FindTrackLinks(Track track)
         {
             var trackLinks = new List<Link>();
             var trackPartCounter = 0;
@@ -534,26 +560,6 @@ namespace TrainEngine.Tracks
             }
         }
 
-        public int GetTrackLength(int beginStationId, int finishStationId)
-        {
-            var tracks = FindTripTracks(beginStationId, finishStationId, "to east");
-            if (tracks == null)
-                tracks = FindTripTracks(beginStationId, finishStationId, "to west");
-            int trackLength = 0;
-            foreach (var track in tracks)
-            {
-                trackLength += track.NumberOfTrackParts * 10;
-            }
-            return trackLength;
-        }
 
-        public string GetTripDirection(int beginStationId, int finishStationId)
-        {
-            if (FindTripTracks(beginStationId, finishStationId, "to east") != null)
-                return "to east";
-            if (FindTripTracks(beginStationId, finishStationId, "to west") != null)
-                return "to west";
-            return string.Empty;
-        }
     }
 }
