@@ -13,6 +13,18 @@ namespace TrainConsole
         {
             var track = new TrackORM();
             Console.WriteLine("Train track!");
+
+            var travelPlan = new TravelPlan()
+                .SettActualTrain(1)
+                .StartAt(1, "10:14")
+                .ArriveAt(2, "11:45")
+                .ArriveAt(3, "13:45")
+                .SettActualTrain(2)
+                .StartAt(1, "11:14")
+                .ArriveAt(2, "12:45")
+                .ArriveAt(3, "14:45")
+                .GenerateNewPlan("5trains_20210316");
+
             // Step 1:
             // Parse the traintrack (Data/traintrack.txt) using ORM (see suggested code)
             // Parse the trains (Data/trains.txt)
@@ -37,13 +49,6 @@ namespace TrainConsole
             //});
             //foo.Write();
 
-            var travelPlan = new TravelPlanAdv().SettActualTrain(1).StartAt(1, "10:14").ArriveAt(13, "11:45").ArriveAt(16, "13:45");
-            travelPlan.SettActualTrain(2).StartAt(1, "10:25").ArriveAt(3, "11:55").ArriveAt(6, "12:35");
-            travelPlan.SettActualTrain(3).StartAt(3, "11:45").ArriveAt(6, "12:35");
-            travelPlan.SettActualTrain(4).StartAt(6, "10:50").ArriveAt(2, "12:35");
-            travelPlan.SettActualTrain(5).StartAt(16, "11:45").ArriveAt(14, "12:35");
-            travelPlan.GenerateNewPlan("5trains_20210315");
-            travelPlan.Simulate("10:00", 1000);
 
             // Step 2:
             // Make the trains run in treads

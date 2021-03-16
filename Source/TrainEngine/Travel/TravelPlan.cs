@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using TrainEngine.Tracks;
 using TrainEngine.Trains;
 
 namespace TrainEngine.Travel
 {
-    class TravelPlan : ITravelPlan
+    public class TravelPlan : ITravelPlan
     {
         public List<TripStop> TimeTable { get; set; }
 
@@ -19,9 +21,8 @@ namespace TrainEngine.Travel
         public TravelPlan()
         {
             _trackORM = new TrackORM();
-
+            TimeTable = new List<TripStop>();
         }
-
 
         public ITravelPlan AddToExistingPlan(string fileName)
         {
@@ -56,7 +57,21 @@ namespace TrainEngine.Travel
 
         public void Simulate(string fakeClock, int timeFastForward)
         {
-            throw new NotImplementedException();
+            void RunTrain(int trainId, TimeSpan fakeClock, int timeFastForward)
+            {
+                var trainTimeTable = TimeTable.FindAll(t => t.TrainId == trainId).OrderBy(t => t.DepartureTime).ToList();
+
+                var waitTime = trainTimeTable[0].DepartureTime - fakeClock;
+
+                Thread.Sleep(Convert.ToInt32(waitTime.Value.TotalMilliseconds) / timeFastForward);
+
+                foreach (var timeStamp in trainTimeTable)
+                {
+                    Thread.Sleep(Convert.ToInt32(waitTime.Value.TotalMilliseconds) / timeFastForward);
+                    Console.WriteLine($"Train {trainId} left station {timeStamp.StationId} at {timeStamp.DepartureTime}");
+
+                }
+            }
         }
 
         public ITravelPlan StartAt(int stationId, string departureTime)
