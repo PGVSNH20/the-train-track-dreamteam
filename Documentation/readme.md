@@ -44,6 +44,19 @@ Handls data related to Trains:
 * Reads from file
 * Writes to file
 * Contains methods related to train information
+```C#
+//TrainsOrm objekt containing data from default filepath
+var trainsOrm = new TrainsOrm()
+
+//TrainsOrm objekt containing data from specific source file
+var trainsOrm = new TrainsOrm(sourceFile)
+
+//Saves data to file
+trainsOrm.Write();
+
+//Gets speficik train objekt
+trainsOrm.GetTrainById(trainId);
+```
 ### Station ORM
 Handls data related to Trains:
 * Reads from file
