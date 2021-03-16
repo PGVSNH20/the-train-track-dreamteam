@@ -34,15 +34,16 @@ namespace TrainEngine.Tracks
 
             foreach (char symbol in TrackMap)
             {
-                while (track.StartStation == null)
+                if (track.StartStation == null)
                 {
-                    if (symbol > 47 && symbol < 59)
+                    if (symbol > 48 && symbol < 59)
                     {
                         track.StartStation = new Station() { Id = symbol };
+                        break;
                     }
                 }
 
-                while (track.EndStation == null)
+                if (track.EndStation == null)
                 {
                     if (symbol == '-' || symbol == '=')
                     track.NumberOfTrackParts++;
@@ -50,6 +51,7 @@ namespace TrainEngine.Tracks
                     if (symbol > 47 && symbol < 59)
                     {
                         track.EndStation = new Station() { Id = symbol };
+                        Tracks.Add(track);
                         track = new Track();
                         track.StartStation = new Station() { Id = symbol };
                     }
@@ -57,7 +59,7 @@ namespace TrainEngine.Tracks
                 }
 
             }
-            Tracks.Add(track);
+            
         }
 
  
