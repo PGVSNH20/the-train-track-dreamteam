@@ -25,7 +25,7 @@ trackORM.PrintTrackMap();
 // gets the minimal travel time between two station for specific train
 trackORM.GetMinTravelTime(trainId, beginStationId, finishStationId)
 
-// gets the minimal travel time between two station for based on specific speed
+// gets the minimal travel time between two station based on specific speed
 trackORM.GetTravelTime(speed, beginStationId, finishStationId)
 
 // gets lenght between two station
