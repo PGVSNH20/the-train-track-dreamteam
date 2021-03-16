@@ -73,7 +73,7 @@ namespace TrainEngine.Tests
         {
             //Arrange
             var track = new TrackORM("*[1]-------[3]");
-
+            
             Assert.Single(track.Tracks);
 
         }
