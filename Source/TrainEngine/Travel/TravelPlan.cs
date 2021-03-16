@@ -65,10 +65,13 @@ namespace TrainEngine.Travel
 
                 Thread.Sleep(Convert.ToInt32(waitTime.Value.TotalMilliseconds) / timeFastForward);
 
-                foreach (var timeStamp in trainTimeTable)
+                for (int i = 0; i < trainTimeTable.Count; i++)
                 {
+                    Console.WriteLine($"Train {trainId} left station {trainTimeTable[i].StationId} at {trainTimeTable[i].DepartureTime}");
+
+                    waitTime = trainTimeTable[i + 1].ArrivalTime - trainTimeTable[i].DepartureTime;
                     Thread.Sleep(Convert.ToInt32(waitTime.Value.TotalMilliseconds) / timeFastForward);
-                    Console.WriteLine($"Train {trainId} left station {timeStamp.StationId} at {timeStamp.DepartureTime}");
+
 
                 }
             }
