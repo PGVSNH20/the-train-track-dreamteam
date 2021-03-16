@@ -34,19 +34,28 @@ namespace TrainEngine.Tracks
 
             foreach (char symbol in TrackMap)
             {
-                if (symbol > 47 && symbol < 59)
+                while (track.StartStation == null)
                 {
-                    Station node = new Station();
-                    double number = char.GetNumericValue(symbol);
-                    node.Id = Convert.ToInt32(number);
-
-                    if (track.StartStation == null)
-                        track.StartStation = node;
-                    else
-                        track.EndStation = node;
+                    if (symbol > 47 && symbol < 59)
+                    {
+                        track.StartStation = new Station() { Id = symbol };
+                    }
                 }
-                if (symbol == '-')
+
+                while (track.EndStation == null)
+                {
+                    if (symbol == '-' || symbol == '=')
                     track.NumberOfTrackParts++;
+
+                    if (symbol > 47 && symbol < 59)
+                    {
+                        track.EndStation = new Station() { Id = symbol };
+                        track = new Track();
+                        track.StartStation = new Station() { Id = symbol };
+                    }
+
+                }
+
             }
             Tracks.Add(track);
         }
