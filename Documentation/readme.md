@@ -2,6 +2,10 @@
 ## TrainEngine API
 ### Main terms and concept
 ![Concept ](_assets/concept.png)
+* API can handle track map thats origins from one station and "grows" to east
+* Tracks can be branches of other tracks and tracks kan merge
+* API can handle "unlimited" amount of stations, switches, crossings and tracks.
+* Tracks contains at least one link. Links starts att station or switch and ends att station or switch. 
 ### Track ORM
 Handls data related to Tracks:
 * Takes input data as file or string
