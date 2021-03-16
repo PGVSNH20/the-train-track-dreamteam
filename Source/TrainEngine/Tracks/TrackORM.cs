@@ -56,7 +56,7 @@ namespace TrainEngine.Tracks
                     if (symbol > 48 && symbol < 59)
                     {
                         track.StartStation = new Station() { Id = symbol };
-                        break;
+                        continue;
                     }
                 }
 

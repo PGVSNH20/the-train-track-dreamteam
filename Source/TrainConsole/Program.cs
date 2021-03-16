@@ -11,7 +11,7 @@ namespace TrainConsole
     {
         private static void Main(string[] args)
         {
-            
+            var track = new TrackORM();
             Console.WriteLine("Train track!");
             // Step 1:
             // Parse the traintrack (Data/traintrack.txt) using ORM (see suggested code)

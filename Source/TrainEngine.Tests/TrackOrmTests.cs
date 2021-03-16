@@ -69,13 +69,29 @@ namespace TrainEngine.Tests
             Assert.Equal(19, result.Count);
         }
         [Fact]
-        public void Test_Track()
+        public void When_Two_Stations_Provided()
         {
             //Arrange
             var track = new TrackORM("*[1]-------[3]");
 
             Assert.Single(track.Tracks);
 
+        }
+        [Fact]
+        public void When_Three_Stations_Provided()
+        {
+            //Arrange
+            var track = new TrackORM("*[1]---[2]----[3]");
+
+            Assert.Equal(2, track.Tracks.Count);
+        }
+        [Fact]
+        public void When_Three_Track_Parts_Provided()
+        {
+            //Arrange
+            var track = new TrackORM("*[1]---[3]");
+
+            Assert.Equal(3, track.Tracks[0].NumberOfTrackParts);
         }
     }
 }
