@@ -34,3 +34,6 @@ trackORM.GetTrackLength(beginStationId, finishStationId)
 // gets trip direction
 trackORM.GetTipDirection(beginStationId, finishStationId)
 ```
+### Train ORM
+### Station ORM
+### Travel Plan
