@@ -92,6 +92,7 @@ namespace TrainEngine.Tests
             // Assert
             Assert.Equal(19, result.Count);
         }
+
         [Fact]
         public void When_Advanced_Track_Map_Provided_Get_19_Tracks()
         {
@@ -105,7 +106,6 @@ namespace TrainEngine.Tests
             // Asserts
             //Track count
             Assert.Equal(19, result.Count);
-
         }
 
         [Fact]
@@ -126,8 +126,8 @@ namespace TrainEngine.Tests
             Assert.Equal("to west", direction17to1km);
             var direction1to17km = trackOrm.GetTripDirection(1, 17);
             Assert.Equal("to east", direction1to17km);
-
         }
+
         [Fact]
         public void When_Advanced_Track_Map_Provided_Get_Directions()
         {
@@ -140,7 +140,6 @@ namespace TrainEngine.Tests
             Assert.Equal("to west", direction17to1km);
             var direction1to17km = trackOrm.GetTripDirection(1, 17);
             Assert.Equal("to east", direction1to17km);
-
         }
 
         [Fact]
@@ -155,8 +154,8 @@ namespace TrainEngine.Tests
             Assert.Equal(TimeSpan.Parse("1:26:15"), travelTime);
             var travelTime2 = trackOrm.GetTravelTime(160, 3, 1);
             Assert.Equal(TimeSpan.Parse("1:30:00"), travelTime2);
-
         }
+
         [Fact]
         public void When_Advanced_Track_Map_Provided_Get_TravelTime_Per_Link_Based_On_Given_Speed()
         {
@@ -166,13 +165,10 @@ namespace TrainEngine.Tests
             //Trip direction
             var travelTime = trackOrm.GetLinkTravelTimes(160, 1, 13);
             Dictionary<string, TimeSpan> links = new Dictionary<string, TimeSpan>();
-            links.Add("4-RS:X7Y26", TimeSpan.Parse("00:18:45"));
-            links.Add("RS:X7Y26-RS:X9Y33", TimeSpan.Parse("00:26:15"));
-            links.Add("RS:X9Y33-7", TimeSpan.Parse("00:18:45"));
-            links.Add("4-RS:X7Y26", TimeSpan.Parse("00:18:45"));
-            links.Add("4-RS:X7Y26", TimeSpan.Parse("00:18:45"));
+            links.Add("1-RS:X5Y5", TimeSpan.Parse("00:07:30"));
+            links.Add("RS:X5Y5-RS:X12Y13", TimeSpan.Parse("00:30:00"));
+            links.Add("RS:X12Y13-13", TimeSpan.Parse("00:07:30"));
             Assert.Equal(links, travelTime);
-
         }
     }
 }
