@@ -62,8 +62,16 @@ namespace TrainEngine.Tracks
 
                 if (track.EndStation == null)
                 {
-                    if (symbol == '-' || symbol == '=')
+                    if (symbol == '-')
                     track.NumberOfTrackParts++;
+
+
+                    if (symbol == '=')
+                    {
+                        track.NumberOfTrackParts++;
+                        track.CrossingsAtTrackPart.Add(track.NumberOfTrackParts);
+                    }
+                        
 
                     if (symbol > 47 && symbol < 59)
                     {
