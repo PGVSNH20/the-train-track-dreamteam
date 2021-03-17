@@ -150,9 +150,9 @@ namespace TrainEngine.Tests
             var trackOrm = new TrackORMAdv(tracks, false);
 
             //Trip direction
-            var travelTime = trackOrm.GetTravelTime(160, 4, 8);
+            var travelTime = trackOrm.GetTripTravelTime(160, 4, 8);
             Assert.Equal(TimeSpan.Parse("1:26:15"), travelTime);
-            var travelTime2 = trackOrm.GetTravelTime(160, 3, 1);
+            var travelTime2 = trackOrm.GetTripTravelTime(160, 3, 1);
             Assert.Equal(TimeSpan.Parse("1:30:00"), travelTime2);
         }
 

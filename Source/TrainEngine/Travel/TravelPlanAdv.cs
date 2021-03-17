@@ -64,7 +64,7 @@ namespace TrainEngine.Travel
                 .ToList()
                 .Last();
 
-            var minTravelTime = _trackORMAdv.GetMinTravelTime(Train.Id, lastRecord.StationId, stationId);
+            var minTravelTime = _trackORMAdv.GetMinTripTravelTime(Train.Id, lastRecord.StationId, stationId);
 
             if ((TimeSpan.Parse(ariveTime) - lastRecord.DepartureTime) > minTravelTime)
             {
@@ -90,7 +90,7 @@ namespace TrainEngine.Travel
                 .ToList()
                 .Last();
 
-            var minTravelTime = _trackORMAdv.GetMinTravelTime(Train.Id, lastRecord.StationId, stationId);
+            var minTravelTime = _trackORMAdv.GetMinTripTravelTime(Train.Id, lastRecord.StationId, stationId);
             var ariveTime = TimeSpan.Parse(departureTime) - TimeSpan.Parse("0:05");
 
             if ((ariveTime - lastRecord.DepartureTime) > minTravelTime)
