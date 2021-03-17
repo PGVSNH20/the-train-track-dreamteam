@@ -65,6 +65,11 @@ trainsOrm.GetTrainById(trainId);
 Handels data related to Trains:
 * Reads from file
 * Writes to file
+```C#
+//Adds new station or updates staion in file
+var trainsORM = new StationsORM();
+trainsORM.AddStation(newStation);
+```
 ### Travel Plan
 Handels data related to travel plan and simulates timetable. Simulation repports departures and arrivals and tracks if two trains uses same link when traveling different directions (CRASCH!!!)
 * Reads from file
