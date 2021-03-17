@@ -9,7 +9,7 @@
 * Tracks contains at least one link. Links starts att station or switch and ends att station or switch.
 * One link can be member of several tracks.
 ### Track ORM
-Handls data related to Tracks:
+Handels data related to Tracks:
 * Takes input data as file or string
 ```C#
 // reads default file
@@ -34,7 +34,7 @@ trackORM.GetTripMinTravelTime(trainId, beginStationId, finishStationId)
 // gets the minimal travel time between two station based on specific speed
 trackORM.GetTripTravelTime(speed, beginStationId, finishStationId)
 
-// gets lenght between two station
+// gets length between two station
 trackORM.GetTripLength(beginStationId, finishStationId)
 
 // gets list of links with there travel time based of specific speed
@@ -44,12 +44,12 @@ trackORM.GetLinkTravelTimes(speed, beginStationId, finishStationId)
 trackORM.GetTripDirection(beginStationId, finishStationId)
 ```
 ### Train ORM
-Handls data related to Trains:
+Handels data related to Trains:
 * Reads from file
 * Writes to file
 * Contains methods related to train information
 ```C#
-//TrainsOrm objekt containing data from default filepath
+//TrainsOrm objekt containing data from default file path
 var trainsOrm = new TrainsOrm()
 
 //TrainsOrm objekt containing data from specific source file
@@ -58,20 +58,20 @@ var trainsOrm = new TrainsOrm(sourceFile)
 //Saves data to file
 trainsOrm.Write();
 
-//Gets speficik train objekt
+//Gets specific train objekt
 trainsOrm.GetTrainById(trainId);
 ```
 ### Station ORM
-Handls data related to Trains:
+Handels data related to Trains:
 * Reads from file
 * Writes to file
 ### Travel Plan
-Handls data related to Travel plan:
+Handels data related to Travel plan:
 * Reads from file
 * Writes to file
 * Contains methods related to travel plan:
 ```C#
-//Sett upp and save new travelplan
+//Sett upp and save new travel plan
 var travelPlan = new TravelPlanAdv()
     .SettActualTrain(1)
     .StartAt(1, "10:14")
@@ -97,7 +97,7 @@ var travelPlan = new TravelPlanAdv()
     .GenerateNewPlan("5trains_20210317");
 ```
 ```C#
-/Load saved travelplan and simulate it based on speficik TrackORM
+/Load saved travel plan and simulate it based on specific TrackORM
 
 var trainTracks = new TrackORMAdv(@"Data\traintrack4.txt");
 
@@ -124,7 +124,7 @@ trainsORM.SaveToFile();
 trainsORM.GetTrainById(1);
 ```
 ### #2
-Adds new station or uppdates station with same id identity
+Adds new station or updates station with same id identity
 ```C#
 var newStation = new Station()
     {
@@ -136,3 +136,44 @@ var newStation = new Station()
 var trainsORM = new StationsORM();
 trainsORM.AddStation(newStation);
 ```
+### #3
+Creates new travel plan for specific train and generates new TimeTable file
+```C#
+var trackORM = new TrackORMAdv(@"Data\traintrack4.txt");
+var travelPlan = new TravelPlanAdv(trackORM)
+    .SettActualTrain(1)
+    .StartAt(1, "10:14")
+    .ArriveAt(2, "11:47")
+    .ArriveAt(3, "13:43")
+    .SettActualTrain(2)
+    .StartAt(4, "10:14")
+    .ArriveAt(5, "11:47")
+    .GenerateNewPlan("newTravelPlan");
+```
+Updates travel plan for specific trains and removes old entities for specific trains if such exists
+```C#
+var trackORM = new TrackORMAdv(@"Data\traintrack4.txt");
+var travelPlan = new TravelPlanAdv(trackORM)
+    .SettActualTrain(1)
+    .StartAt(1, "10:24")
+    .ArriveAt(2, "11:57")
+    .ArriveAt(3, "13:50")
+    .SettActualTrain(3)
+    .StartAt(4, "12:24")
+    .ArriveAt(5, "15:57")
+    .AddToExistingPlan("newTravelPlan");
+```
+Loads travel plan from file
+```C#
+var trackORM = new TrackORMAdv(@"Data\traintrack4.txt");
+var travelPlan = new TravelPlanAdv(trackORM)
+    .LoadPlan("newTravelPlan");
+```
+Simulates travel plan (start time = "10:00" and time speed = x1000)
+```C#
+var trackORM = new TrackORMAdv(@"Data\traintrack4.txt");
+var travelPlan = new TravelPlanAdv(trackORM)
+    .LoadPlan("newTravelPlan")
+    .Simulate("10:00", 1000);;
+```
+

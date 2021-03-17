@@ -17,23 +17,23 @@ namespace TrainEngine.Trains
         {
             SourceFile = @"Data\trains.json";
             Trains = new List<Train>();
-            Read();
+            _Read();
         }
 
         public TrainsOrm(string sourceFile)
         {
             SourceFile = sourceFile;
             Trains = new List<Train>();
-            Read();
+            _Read();
         }
 
-        public void Read()
+        private void _Read()
         {
             var jsonString = File.ReadAllText(SourceFile);
             Trains = JsonSerializer.Deserialize<List<Train>>(jsonString);
         }
 
-        public void Write()
+        public void SaveToFile()
         {
             var options = new JsonSerializerOptions
             {
@@ -43,6 +43,7 @@ namespace TrainEngine.Trains
             string jsonString = JsonSerializer.Serialize(Trains, options);
             File.WriteAllText(SourceFile, jsonString);
         }
+
         public Train GetTrainById(int traindId)
         {
             return Trains.Find(t => t.Id == traindId);

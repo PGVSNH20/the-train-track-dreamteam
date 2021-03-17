@@ -76,6 +76,9 @@ namespace TrainEngine.Tracks
                 tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
             }
 
+            if (tripTracks == null)
+                throw new ArgumentOutOfRangeException($"Can not build tracks between staion {beginStationId} and {finishStationId}");
+
             var trains = new TrainsOrm();
             var maxSpeed = trains.GetTrainById(trainId).MaxSpeed;
             double tripLengh = tripTracks.Sum(t => t.NumberOfTrackParts) * 10;

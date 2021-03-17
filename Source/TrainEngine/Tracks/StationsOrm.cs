@@ -11,28 +11,39 @@ namespace TrainEngine.ORM
 {
     public class StationsORM
     {
-        public List<Station> Stations { get; set; }
+        public List<Station> Stations { get => _stations; }
+        private List<Station> _stations;
 
         public StationsORM()
         {
-            Read();
+            _Read();
         }
 
-        public StationsORM Read()
+        public void AddStation(Station newStation)
+        {
+            if (_stations.Exists(s => s.Id == newStation.Id))
+            {
+                _stations.Remove(_stations.Find(s => s.Id == newStation.Id));
+            };
+            _stations.Add(newStation);
+            _Write();
+        }
+
+        private StationsORM _Read()
         {
             var jsonString = File.ReadAllText("Data/stations.json");
-            Stations = JsonSerializer.Deserialize<List<Station>>(jsonString);
+            _stations = JsonSerializer.Deserialize<List<Station>>(jsonString);
             return this;
         }
 
-        public StationsORM Write()
+        private StationsORM _Write()
         {
             var options = new JsonSerializerOptions
             {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
-            string jsonString = JsonSerializer.Serialize(Stations, options);
+            string jsonString = JsonSerializer.Serialize(_stations, options);
             File.WriteAllText("Data/stations.json", jsonString);
             return this;
         }
