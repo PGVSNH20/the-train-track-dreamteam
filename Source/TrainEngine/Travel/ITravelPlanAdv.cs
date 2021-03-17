@@ -24,6 +24,6 @@ namespace TrainEngine.Travel
 
         ITravelPlanAdv LoadPlan(string fileName);
 
-        void Simulate(string fakeClock, int timeFastForward);
+        ITravelPlanAdv Simulate(string fakeClock, int timeFastForward);
     }
 }
