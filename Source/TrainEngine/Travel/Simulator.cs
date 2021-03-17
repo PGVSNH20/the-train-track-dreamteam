@@ -66,21 +66,26 @@ namespace TrainEngine.Travel
             Console.WriteLine($"Train {trainId} is ready for departure");
             Thread.Sleep(waitTime / timeFastForward);
 
-            foreach (var tripStop in trainTimeTable)
+            for (var i = 0; i < trainTimeTable.Count; i++)
             {
-                if (tripStop.ArrivalTime != null)
+                if (trainTimeTable[i].ArrivalTime != null)
                 {
-                    waitTime = Convert.ToInt32(((TimeSpan)tripStop.DepartureTime - fakeClock).TotalMilliseconds);
-                    fakeClock += (TimeSpan)tripStop.ArrivalTime - fakeClock;
+                    waitTime = Convert.ToInt32(((TimeSpan)trainTimeTable[i].DepartureTime - fakeClock).TotalMilliseconds);
+                    fakeClock += (TimeSpan)trainTimeTable[i].ArrivalTime - fakeClock;
                     Thread.Sleep(waitTime / timeFastForward);
-                    Console.WriteLine($"Train {tripStop.TrainId} arrived att station {tripStop.StationId} at {fakeClock} o´clock");
+                    Console.WriteLine($"Train {trainTimeTable[i].TrainId} arrived att station {trainTimeTable[i].StationId} at {fakeClock} o´clock");
                 }
-                if (tripStop.DepartureTime != null)
+                if (trainTimeTable[i].DepartureTime != null)
                 {
-                    waitTime = Convert.ToInt32(((TimeSpan)tripStop.DepartureTime - fakeClock).TotalMilliseconds);
-                    fakeClock += (TimeSpan)tripStop.DepartureTime - fakeClock;
-                    Thread.Sleep(waitTime / timeFastForward);
-                    Console.WriteLine($"Train {tripStop.TrainId} left station {tripStop.StationId} at {fakeClock} o´clock");
+                    waitTime = Convert.ToInt32(((TimeSpan)trainTimeTable[i].DepartureTime - fakeClock).TotalMilliseconds);
+                    fakeClock += (TimeSpan)trainTimeTable[i].DepartureTime - fakeClock;
+                    if (trainTimeTable[i] == trainTimeTable.Last())
+                        Console.WriteLine($"Train {trainTimeTable[i].TrainId} reached final destination");
+                    else
+                    {
+                        Thread.Sleep(waitTime / timeFastForward);
+                        Console.WriteLine($"Train {trainTimeTable[i].TrainId} left station {trainTimeTable[i].StationId} at {fakeClock} o´clock");
+                    }
                 }
             }
         }

@@ -176,20 +176,20 @@ var travelPlan = new TravelPlanAdv(trackORM)
     .LoadPlan("newTravelPlan")
     .Simulate("10:00", 1000);
 
-//Train 1 is ready for departure
-//Train 3 is ready for departure
 //Train 2 is ready for departure
+//Train 3 is ready for departure
+//Train 1 is ready for departure
 //Train 2 left station 4 at 10:14:00 o´clock
 //Train 1 left station 1 at 10:24:00 o´clock
 //Train 2 arrived att station 5 at 11:47:00 o´clock
-//Train 2 left station 5 at 11:52:00 o´clock
+//Train 2 reached final destination
 //Train 1 arrived att station 2 at 11:57:00 o´clock
 //Train 1 left station 2 at 12:02:00 o´clock
 //Train 3 left station 4 at 12:24:00 o´clock
 //Train 1 arrived att station 3 at 13:50:00 o´clock
-//Train 1 left station 3 at 13:55:00 o´clock
+//Train 1 reached final destination
 //Train 3 arrived att station 5 at 15:57:00 o´clock
-//Train 3 left station 5 at 16:02:00 o´clock
+//Train 3 reached final destination
 ```
 
 ### #4
