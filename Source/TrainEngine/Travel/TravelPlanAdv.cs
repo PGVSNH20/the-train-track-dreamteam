@@ -147,10 +147,11 @@ namespace TrainEngine.Travel
             File.WriteAllText($"Data/{fileName}.json", jsonString);
         }
 
-        public void Simulate(string fakeClock, int timeFastForward)
+        public ITravelPlanAdv Simulate(string fakeClock, int timeFastForward)
         {
             var simulator = new Simulator(TimeTable, fakeClock, timeFastForward, _trackORMAdv);
             simulator.Simulate(timeFastForward);
+            return this;
         }
     }
 }
