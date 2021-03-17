@@ -66,7 +66,7 @@ namespace TrainEngine.Tracks
             return string.Empty;
         }
 
-        public TimeSpan GetMinTravelTime(int trainId, int beginStationId, int finishStationId)
+        public TimeSpan GetMinTripTravelTime(int trainId, int beginStationId, int finishStationId)
         {
             var direction = "to east";
             var tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
@@ -117,7 +117,7 @@ namespace TrainEngine.Tracks
             return linkTravelTimes;
         }
 
-        public TimeSpan GetTravelTime(int speed, int beginStationId, int finishStationId)
+        public TimeSpan GetTripTravelTime(int speed, int beginStationId, int finishStationId)
         {
             var direction = "to east";
             var tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
@@ -171,6 +171,35 @@ namespace TrainEngine.Tracks
             return linkTravelTimes;
         }
 
+        public void PrintTrackMap()
+        {
+            Console.Write($"|x,y");
+            for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
+                Console.Write($"|{y,-3}");
+            Console.WriteLine($"|");
+
+            RenderLineSeparator();
+
+            for (var x = 0; x < _trainTrackMap.GetLength(0); x++)
+            {
+                Console.Write($"{x,4}");
+                for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
+                {
+                    Console.Write($"| {_trainTrackMap[x, y]} ");
+                }
+                Console.WriteLine($"|");
+                RenderLineSeparator();
+            }
+
+            void RenderLineSeparator()
+            {
+                Console.Write($"{' ',4}");
+                for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
+                    Console.Write($"|{"–––"}");
+                Console.WriteLine($"|");
+            }
+        }
+
         //internal methods
 
         private void _Read(bool file = true, string trackString = "")
@@ -202,35 +231,6 @@ namespace TrainEngine.Tracks
                     if (line[y] == '*') { _currentPos.x = x; _currentPos.y = y; }
                     _trainTrackMap[x, y] = line[y];
                 }
-            }
-        }
-
-        public void PrintTrackMap()
-        {
-            Console.Write($"|x,y");
-            for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
-                Console.Write($"|{y,-3}");
-            Console.WriteLine($"|");
-
-            RenderLineSeparator();
-
-            for (var x = 0; x < _trainTrackMap.GetLength(0); x++)
-            {
-                Console.Write($"{x,4}");
-                for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
-                {
-                    Console.Write($"| {_trainTrackMap[x, y]} ");
-                }
-                Console.WriteLine($"|");
-                RenderLineSeparator();
-            }
-
-            void RenderLineSeparator()
-            {
-                Console.Write($"{' ',4}");
-                for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
-                    Console.Write($"|{"–––"}");
-                Console.WriteLine($"|");
             }
         }
 
