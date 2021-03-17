@@ -3,10 +3,11 @@
 ### Main terms and concept
 ![Concept ](_assets/concept.png)
 * API can handle track map thats origins from one station and "grows" to east
-* Tracks can be branches of other tracks
+* Tracks can branch
 * Tracks can merge
 * API can handle "unlimited" amount of stations, switches, crossings and tracks.
-* Tracks contains at least one link. Links starts att station or switch and ends att station or switch. 
+* Tracks contains at least one link. Links starts att station or switch and ends att station or switch.
+* One link can be member of several tracks.
 ### Track ORM
 Handls data related to Tracks:
 * Takes input data as file or string
@@ -28,13 +29,16 @@ trackORM.PrintTrackMap();
 * Contains methods related to track information:
 ```C#
 // gets the minimal travel time between two station for specific train
-trackORM.GetMinTravelTime(trainId, beginStationId, finishStationId)
+trackORM.GetTripMinTravelTime(trainId, beginStationId, finishStationId)
 
 // gets the minimal travel time between two station based on specific speed
-trackORM.GetTravelTime(speed, beginStationId, finishStationId)
+trackORM.GetTripTravelTime(speed, beginStationId, finishStationId)
 
 // gets lenght between two station
-trackORM.GetTrackLength(beginStationId, finishStationId)
+trackORM.GetTripLength(beginStationId, finishStationId)
+
+// gets list of links with there travel time based of specific speed
+trackORM.GetLinkTravelTimes(speed, beginStationId, finishStationId)
 
 // gets trip direction
 trackORM.GetTripDirection(beginStationId, finishStationId)
