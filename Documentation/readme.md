@@ -68,7 +68,7 @@ Handls data related to Travel plan:
 * Contains methods related to travel plan:
 ```C#
 //Sett upp and save new travelplan
-var travelPlan = new TravelPlan()
+var travelPlan = new TravelPlanAdv()
     .SettActualTrain(1)
     .StartAt(1, "10:14")
     .ArriveAt(2, "11:47")
