@@ -15,7 +15,9 @@ namespace TrainEngine.Travel
 {
     public class TravelPlanAdv : ITravelPlanAdv
     {
-        public List<TripStop> TimeTable { get; set; }
+        public List<TripStop> TimeTable { get => _timeTable; }
+
+        private List<TripStop> _timeTable { get; set; }
 
         public Train Train { get; set; }
 
@@ -23,19 +25,19 @@ namespace TrainEngine.Travel
 
         public TravelPlanAdv()
         {
-            TimeTable = new List<TripStop>();
+            _timeTable = new List<TripStop>();
             _trackORMAdv = new TrackORMAdv();
         }
 
         public TravelPlanAdv(TrackORMAdv trackORMAdv)
         {
-            TimeTable = new List<TripStop>();
+            _timeTable = new List<TripStop>();
             _trackORMAdv = trackORMAdv;
         }
 
         public TravelPlanAdv(string sringInput, bool file = true)
         {
-            TimeTable = new List<TripStop>();
+            _timeTable = new List<TripStop>();
             _trackORMAdv = new TrackORMAdv(sringInput, file);
         }
 
@@ -52,13 +54,13 @@ namespace TrainEngine.Travel
             tripStop.StationId = stationId;
             tripStop.DepartureTime = TimeSpan.Parse(departureTime);
             tripStop.TrainId = Train.Id;
-            TimeTable.Add(tripStop);
+            _timeTable.Add(tripStop);
             return this;
         }
 
         public ITravelPlanAdv ArriveAt(int stationId, string ariveTime)
         {
-            var lastRecord = TimeTable
+            var lastRecord = _timeTable
                 .FindAll(t => t.TrainId == Train.Id)
                 .OrderBy(t => t.ArrivalTime)
                 .ToList()
@@ -74,17 +76,17 @@ namespace TrainEngine.Travel
                 TimeSpan? departureTime = tripStop.ArrivalTime + TimeSpan.Parse("0:05");
                 tripStop.DepartureTime = departureTime;
                 tripStop.TrainId = Train.Id;
-                TimeTable.Add(tripStop);
+                _timeTable.Add(tripStop);
                 return this;
             }
             throw new ArgumentOutOfRangeException(
-                $"Mininum travel time for train {Train.Id} from station {lastRecord.StationId} " +
+                $"Minimum travel time for train {Train.Id} from station {lastRecord.StationId} " +
                 $"to station {stationId} is {minTravelTime}");
         }
 
         public ITravelPlanAdv DepartureFrom(int stationId, string departureTime)
         {
-            var lastRecord = TimeTable
+            var lastRecord = _timeTable
                 .FindAll(t => t.TrainId == Train.Id)
                 .OrderBy(t => t.ArrivalTime)
                 .ToList()
@@ -100,11 +102,11 @@ namespace TrainEngine.Travel
                 tripStop.ArrivalTime = ariveTime;
                 tripStop.DepartureTime = TimeSpan.Parse(departureTime);
                 tripStop.TrainId = Train.Id;
-                TimeTable.Add(tripStop);
+                _timeTable.Add(tripStop);
                 return this;
             }
             throw new ArgumentOutOfRangeException(
-              $"Mininum travel time for train {Train.Id} from station {lastRecord.StationId} " +
+              $"Minimum travel time for train {Train.Id} from station {lastRecord.StationId} " +
               $"to station {stationId} is {minTravelTime}");
         }
 
@@ -117,9 +119,14 @@ namespace TrainEngine.Travel
         public ITravelPlanAdv AddToExistingPlan(string fileName = "timetable")
         {
             var tmpTimeTable = new List<TripStop>();
-            tmpTimeTable.AddRange(TimeTable);
+            tmpTimeTable.AddRange(_timeTable);
             Read(fileName);
-            TimeTable.AddRange(tmpTimeTable);
+
+            foreach (var tripStop in tmpTimeTable)
+                if (_timeTable.Exists(t => t.TrainId == tripStop.TrainId))
+                    _timeTable.RemoveAll(t => t.TrainId == tripStop.TrainId);
+
+            _timeTable.AddRange(tmpTimeTable);
             Write(fileName);
             return this;
         }
@@ -133,7 +140,7 @@ namespace TrainEngine.Travel
         private void Read(string fileName)
         {
             var jsonString = File.ReadAllText($"Data/{fileName}.json");
-            TimeTable = JsonSerializer.Deserialize<List<TripStop>>(jsonString);
+            _timeTable = JsonSerializer.Deserialize<List<TripStop>>(jsonString);
         }
 
         private void Write(string fileName)
@@ -143,13 +150,13 @@ namespace TrainEngine.Travel
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin),
                 WriteIndented = true
             };
-            string jsonString = JsonSerializer.Serialize(TimeTable, options);
+            string jsonString = JsonSerializer.Serialize(_timeTable, options);
             File.WriteAllText($"Data/{fileName}.json", jsonString);
         }
 
         public ITravelPlanAdv Simulate(string fakeClock, int timeFastForward)
         {
-            var simulator = new Simulator(TimeTable, fakeClock, timeFastForward, _trackORMAdv);
+            var simulator = new Simulator(_timeTable, fakeClock, timeFastForward, _trackORMAdv);
             simulator.Simulate(timeFastForward);
             return this;
         }
