@@ -25,18 +25,26 @@ namespace TrainConsole
                 .ArriveAt(3, "14:45")
                 .GenerateNewPlan("5trains_20210316");
 
+
             // Step 1:
             // Parse the traintrack (Data/traintrack.txt) using ORM (see suggested code)
             // Parse the trains (Data/trains.txt)
+            //var espresso = new CoffeeMachine().AddEspresso().AddBean("Robusta", 100).ToBeverage();
+            
 
-            var trainTracks = new TrackORMAdv(@"Data\traintrack3.txt");
+            var train = new Train();
+
+            var trainTracks = new TrackORM(@"Data\traintrack3.txt");
+
+            travelPlan.Simulate("10:14:00", 1000);
+
             //trainTracks.PrintTrackMap();
 
-            var fo = trainTracks.GetTripDirection(3, 4);
+            //var fo = trainTracks.GetTripDirection(3, 4);
 
 
-            var foo = trainTracks.GetTravelTime(60, 4, 8);
-            var foo2 = trainTracks.GetLinkTravelTimes(60, 4, 8);
+            //var foo = trainTracks.GetTravelTime(60, 4, 8);
+            //var foo2 = trainTracks.GetLinkTravelTimes(60, 4, 8);
 
             //var foo = new TravelPlan().SettActualTrain(2).StartAt(3, "11:03").ArriveAt(5, "12:00");
             //foo.GenerateNewPlan("timetable_20210312");

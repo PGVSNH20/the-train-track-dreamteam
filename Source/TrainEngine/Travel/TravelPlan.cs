@@ -57,6 +57,10 @@ namespace TrainEngine.Travel
 
         public void Simulate(string fakeClock, int timeFastForward)
         {
+            TimeSpan clock = TimeSpan.Parse(fakeClock);
+            RunTrain(1, clock, timeFastForward);
+            Thread trainThread = new Thread(RunTrain(2, clock, timeFastForward));
+
             void RunTrain(int trainId, TimeSpan fakeClock, int timeFastForward)
             {
                 var trainTimeTable = TimeTable.FindAll(t => t.TrainId == trainId).OrderBy(t => t.DepartureTime).ToList();
@@ -69,10 +73,11 @@ namespace TrainEngine.Travel
                 {
                     Console.WriteLine($"Train {trainId} left station {trainTimeTable[i].StationId} at {trainTimeTable[i].DepartureTime}");
 
-                    waitTime = trainTimeTable[i + 1].ArrivalTime - trainTimeTable[i].DepartureTime;
-                    Thread.Sleep(Convert.ToInt32(waitTime.Value.TotalMilliseconds) / timeFastForward);
-
-
+                    if (i < (trainTimeTable.Count - 1))
+                    {
+                        waitTime = trainTimeTable[i + 1].ArrivalTime - trainTimeTable[i].DepartureTime;
+                        Thread.Sleep(Convert.ToInt32(waitTime.Value.TotalMilliseconds) / timeFastForward);
+                    }                                                
                 }
             }
         }
