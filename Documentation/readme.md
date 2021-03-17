@@ -66,3 +66,38 @@ Handls data related to Travel plan:
 * Reads from file
 * Writes to file
 * Contains methods related to travel plan:
+```C#
+//Sett upp and save new travelplan
+var travelPlan = new TravelPlan()
+    .SettActualTrain(1)
+    .StartAt(1, "10:14")
+    .ArriveAt(2, "11:47")
+    .ArriveAt(3, "13:43")
+    .SettActualTrain(2)
+    .StartAt(1, "11:14")
+    .ArriveAt(13, "12:42")
+    .ArriveAt(14, "14:48")
+    .SettActualTrain(3)
+    .StartAt(4, "11:14")
+    .ArriveAt(7, "12:32")
+    .ArriveAt(17, "14:56")
+    .SettActualTrain(4)
+    .StartAt(16, "11:12")
+    .ArriveAt(14, "12:35")
+    .ArriveAt(13, "14:33")
+    .SettActualTrain(5)
+    .StartAt(8, "11:12")
+    .ArriveAt(7, "12:43")
+    .ArriveAt(4, "13:42")
+    .ArriveAt(1, "16:12")
+    .GenerateNewPlan("5trains_20210317");
+```
+```C#
+/Load saved travelplan and simulate it based on speficik TrackORM
+
+var trainTracks = new TrackORMAdv(@"Data\traintrack4.txt");
+
+var travelPlan = new TravelPlanAdv(trainTracks)
+  .LoadPlan("5trains_20210317")
+  .Simulate("10:00", 1000);
+```
