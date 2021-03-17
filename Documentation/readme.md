@@ -105,3 +105,34 @@ var travelPlan = new TravelPlanAdv(trainTracks)
   .LoadPlan("5trains_20210317")
   .Simulate("10:00", 1000);
 ```
+## Code exemples
+### #1
+Adds new train to file and gets train by id from saved trains
+```C#
+var newTrain = new Train()
+{
+    Id = 6,
+    Name = "Bullet",
+    MaxSpeed = 300,
+    Operated = false,
+    MaxPassengersCount = 100,
+};
+
+var trainsORM = new TrainsOrm();
+trainsORM.Trains.Add(newTrain);
+trainsORM.SaveToFile();
+trainsORM.GetTrainById(1);
+```
+### #2
+Adds new station or uppdates station with same id identity
+```C#
+var newStation = new Station()
+    {
+        Id = 11,
+        StationName = "Falun",
+        IsEndStation = false
+    };
+
+var trainsORM = new StationsORM();
+trainsORM.AddStation(newStation);
+```
