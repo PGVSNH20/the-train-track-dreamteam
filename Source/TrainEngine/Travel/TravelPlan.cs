@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 using TrainEngine.Tracks;
 using TrainEngine.Trains;
 
@@ -58,8 +59,22 @@ namespace TrainEngine.Travel
         public void Simulate(string fakeClock, int timeFastForward)
         {
             TimeSpan clock = TimeSpan.Parse(fakeClock);
-            RunTrain(1, clock, timeFastForward);
-            Thread trainThread = new Thread(RunTrain(2, clock, timeFastForward));
+
+            int[] trains = TimeTable
+                .GroupBy(t => t.TrainId)
+                .Select(grp => grp.First())
+                .Select(t => t.TrainId)
+                .ToArray();
+
+            List<Task> trainTasks = new List<Task>();
+
+            foreach (int trainId in trains)
+            {
+                var runTrainTask = Task.Run(() => RunTrain(trainId, clock, timeFastForward));
+                trainTasks.Add(runTrainTask);
+            }
+
+            Task.WaitAll(trainTasks.ToArray());
 
             void RunTrain(int trainId, TimeSpan fakeClock, int timeFastForward)
             {
@@ -70,14 +85,20 @@ namespace TrainEngine.Travel
                 Thread.Sleep(Convert.ToInt32(waitTime.Value.TotalMilliseconds) / timeFastForward);
 
                 for (int i = 0; i < trainTimeTable.Count; i++)
-                {
-                    Console.WriteLine($"Train {trainId} left station {trainTimeTable[i].StationId} at {trainTimeTable[i].DepartureTime}");
-
+                { 
+                    if (i > 0)
+                    { 
+                        Console.WriteLine($"Train {trainId} arrived at station {trainTimeTable[i].StationId} at {trainTimeTable[i].ArrivalTime}");
+                        if (i != (trainTimeTable.Count - 1))                       
+                        Thread.Sleep(5);                       
+                    }       
                     if (i < (trainTimeTable.Count - 1))
                     {
+                        Thread.Sleep(5);
+                        Console.WriteLine($"Train {trainId} left station {trainTimeTable[i].StationId} at {trainTimeTable[i].DepartureTime}");
                         waitTime = trainTimeTable[i + 1].ArrivalTime - trainTimeTable[i].DepartureTime;
-                        Thread.Sleep(Convert.ToInt32(waitTime.Value.TotalMilliseconds) / timeFastForward);
-                    }                                                
+                        Thread.Sleep(Convert.ToInt32(waitTime.Value.TotalMilliseconds) / timeFastForward);              
+                    }               
                 }
             }
         }
