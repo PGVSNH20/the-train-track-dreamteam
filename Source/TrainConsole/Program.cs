@@ -11,7 +11,7 @@ namespace TrainConsole
     {
         private static void Main(string[] args)
         {
-            Console.ReadKey();
+            //run
         }
     }
 }
