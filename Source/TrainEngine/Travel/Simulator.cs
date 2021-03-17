@@ -99,9 +99,7 @@ namespace TrainEngine.Travel
 
             var tripDirection = TrackORMadv.GetTripDirection(beginStation, finishStation);
 
-            for (
-                
-                var i = 0; i < trainTimeTable.Count() - 1; i++)
+            for (var i = 0; i < trainTimeTable.Count() - 1; i++)
             {
                 var trackLenght = TrackORMadv.GetTripLength(trainTimeTable[i].StationId, trainTimeTable[i + 1].StationId);
                 var travelTime = trainTimeTable[i + 1].ArrivalTime - trainTimeTable[i].DepartureTime;

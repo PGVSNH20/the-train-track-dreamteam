@@ -17,32 +17,44 @@ namespace TrainConsole
             //var travelPlan = new TravelPlan()
             //    .SettActualTrain(1)
             //    .StartAt(1, "10:14")
-            //    .ArriveAt(2, "11:45")
-            //    .ArriveAt(3, "13:45")
+            //    .ArriveAt(2, "11:47")
+            //    .ArriveAt(3, "13:43")
             //    .SettActualTrain(2)
             //    .StartAt(1, "11:14")
-            //    .ArriveAt(2, "12:45")
-            //    .ArriveAt(3, "14:45")
-            //    .GenerateNewPlan("5trains_20210316");
+            //    .ArriveAt(13, "12:42")
+            //    .ArriveAt(14, "14:48")
+            //    .SettActualTrain(3)
+            //    .StartAt(4, "11:14")
+            //    .ArriveAt(7, "12:32")
+            //    .ArriveAt(17, "14:56")
+            //    .SettActualTrain(4)
+            //    .StartAt(16, "11:12")
+            //    .ArriveAt(14, "12:35")
+            //    .ArriveAt(13, "14:33")
+            //     .SettActualTrain(5)
+            //    .StartAt(8, "11:12")
+            //    .ArriveAt(7, "12:43")
+            //    .ArriveAt(4, "13:42")
+            //    .ArriveAt(1, "16:12")
+            //    .GenerateNewPlan("5trains_20210317");
 
             //var travelPlanAdv = new TravelPlanAdv();
-
 
             // Step 1:
             // Parse the traintrack (Data/traintrack.txt) using ORM (see suggested code)
             // Parse the trains (Data/trains.txt)
             //var espresso = new CoffeeMachine().AddEspresso().AddBean("Robusta", 100).ToBeverage();
-            
 
-            var train = new Train();
+            //var train = new Train();
 
-            var trainTracks = new TrackORM(@"Data\traintrack3.txt");
+            //var trainTracks = new TrackORM(@"Data\traintrack3.txt");
 
-            travelPlan.Simulate("10:14:00", 1000);
+            //travelPlan.Simulate("10:14:00", 1000);
 
             var trainTracks = new TrackORMAdv(@"Data\traintrack4.txt");
+            trainTracks._PrintTrackMap();
 
-            var travelPlan = new TravelPlanAdv(trainTracks).LoadPlan("timetable_5trains_20210315").Simulate("10:00", 1000);
+            var travelPlan = new TravelPlanAdv(trainTracks).LoadPlan("5trains_20210317").Simulate("10:00", 1000);
 
             //trainTracks.PrintTrackMap();
 

@@ -59,7 +59,7 @@ namespace TrainEngine.Travel
         {
             TimeSpan clock = TimeSpan.Parse(fakeClock);
             RunTrain(1, clock, timeFastForward);
-            Thread trainThread = new Thread(RunTrain(2, clock, timeFastForward));
+            //Thread trainThread = new Thread(RunTrain(2, clock, timeFastForward));
 
             void RunTrain(int trainId, TimeSpan fakeClock, int timeFastForward)
             {
@@ -77,7 +77,7 @@ namespace TrainEngine.Travel
                     {
                         waitTime = trainTimeTable[i + 1].ArrivalTime - trainTimeTable[i].DepartureTime;
                         Thread.Sleep(Convert.ToInt32(waitTime.Value.TotalMilliseconds) / timeFastForward);
-                    }                                                
+                    }
                 }
             }
         }
