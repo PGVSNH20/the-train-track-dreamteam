@@ -27,9 +27,18 @@ namespace TrainConsole
 
             //var travelPlanAdv = new TravelPlanAdv();
 
+
             // Step 1:
             // Parse the traintrack (Data/traintrack.txt) using ORM (see suggested code)
             // Parse the trains (Data/trains.txt)
+            //var espresso = new CoffeeMachine().AddEspresso().AddBean("Robusta", 100).ToBeverage();
+            
+
+            var train = new Train();
+
+            var trainTracks = new TrackORM(@"Data\traintrack3.txt");
+
+            travelPlan.Simulate("10:14:00", 1000);
 
             var trainTracks = new TrackORMAdv(@"Data\traintrack4.txt");
 
