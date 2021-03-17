@@ -73,7 +73,6 @@ namespace TrainEngine.Travel
                 var runTrainTask = Task.Run(() => RunTrain(trainId, clock, timeFastForward));
                 trainTasks.Add(runTrainTask);
             }
-
             Task.WaitAll(trainTasks.ToArray());
 
             void RunTrain(int trainId, TimeSpan fakeClock, int timeFastForward)

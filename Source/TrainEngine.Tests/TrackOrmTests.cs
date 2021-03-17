@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using TrainEngine.Tracks;
+using TrainEngine.Travel;
 using Xunit;
 
 namespace TrainEngine.Tests
@@ -59,6 +62,23 @@ namespace TrainEngine.Tests
             var track = new TrackORM("*[1]-=-[3]");
 
             Assert.Equal(2, track.Tracks[0].CrossingsAtTrackPart[0]);
+        }
+        [Fact]
+        public void When_One_Start_Two_Arrive_Expect_Three_Stops()
+        {
+            //Arrange
+            var travelPlan = new TravelPlan()
+           .SettActualTrain(1)
+           .StartAt(1, "00:00")
+           .ArriveAt(2, "00:01")
+           .ArriveAt(3, "00:02");
+                             
+            var actual = travelPlan.TimeTable.Count;
+            var excpected = 3;
+
+            //Assert
+            Assert.Equal(excpected, actual);
+
         }
     }
 }
