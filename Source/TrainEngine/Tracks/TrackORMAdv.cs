@@ -205,7 +205,7 @@ namespace TrainEngine.Tracks
             }
         }
 
-        public void _PrintTrackMap()
+        public void PrintTrackMap()
         {
             Console.Write($"|x,y");
             for (var y = 0; y < _trainTrackMap.GetLength(1); y++)
@@ -559,7 +559,5 @@ namespace TrainEngine.Tracks
                 return newLink;
             }
         }
-
-
     }
 }
