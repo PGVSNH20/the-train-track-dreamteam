@@ -77,28 +77,15 @@ Handels data related to travel plan and simulates timetable. Simulation repports
 * Contains methods related to travel plan:
 ```C#
 //Sett upp and save new travel plan
-var travelPlan = new TravelPlanAdv()
-    .SettActualTrain(1)
-    .StartAt(1, "10:14")
-    .ArriveAt(2, "11:47")
-    .ArriveAt(3, "13:43")
-    .SettActualTrain(2)
-    .StartAt(1, "11:14")
-    .ArriveAt(13, "12:42")
-    .ArriveAt(14, "14:48")
-    .SettActualTrain(3)
-    .StartAt(4, "11:14")
-    .ArriveAt(7, "12:32")
-    .ArriveAt(17, "14:56")
-    .SettActualTrain(4)
-    .StartAt(16, "11:12")
-    .ArriveAt(14, "12:35")
-    .ArriveAt(13, "14:33")
-    .SettActualTrain(5)
-    .StartAt(8, "11:12")
-    .ArriveAt(7, "12:43")
-    .ArriveAt(4, "13:42")
-    .ArriveAt(1, "16:12")
+var travelPlan = new TravelPlanAdv(trackORM)
+    .SettActualTrain(1) //Sets actual train
+    .StartAt(1, "10:14") //Sets departure time from start station
+    .ArriveAt(2, "13:43", "13:53") //Sets arrival and departure time for next station
+    .ArriveAt(3, "14:48") //Sets arrival time for next station
+    .SettActualTrain(2) //Changes actual train
+    .StartAt(1, "11:14") //Sets departure time from start station
+    .ArriveAt(13, "12:42") //Sets arrival and time for next station, default departure time + 5 min
+    .ArriveAt(14, "14:48"); //Sets arrival time for next station
     .GenerateNewPlan("5trains_20210317");
 ```
 ```C#

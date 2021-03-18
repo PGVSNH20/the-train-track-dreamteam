@@ -16,7 +16,7 @@ namespace TrainEngine.Travel
 
         ITravelPlanAdv StartAt(int stationId, string departureTime);
 
-        ITravelPlanAdv ArriveAt(int stationId, string ariveTime);
+        ITravelPlanAdv ArriveAt(int stationId, string ariveTime, string departureTime = null);
 
         ITravelPlanAdv GenerateNewPlan(string fileName);
 

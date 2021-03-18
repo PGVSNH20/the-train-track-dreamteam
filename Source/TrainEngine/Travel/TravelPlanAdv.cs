@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Threading;
 using System.Threading.Tasks;
+using TrainEngine.Exceptions;
 using TrainEngine.Tracks;
 using TrainEngine.Trains;
 
@@ -58,7 +59,7 @@ namespace TrainEngine.Travel
             return this;
         }
 
-        public ITravelPlanAdv ArriveAt(int stationId, string ariveTime)
+        public ITravelPlanAdv ArriveAt(int stationId, string ariveTime, string departureTime = null)
         {
             var lastRecord = _timeTable
                 .FindAll(t => t.TrainId == Train.Id)
@@ -73,13 +74,13 @@ namespace TrainEngine.Travel
                 var tripStop = new TripStop();
                 tripStop.StationId = stationId;
                 tripStop.ArrivalTime = TimeSpan.Parse(ariveTime);
-                TimeSpan? departureTime = tripStop.ArrivalTime + TimeSpan.Parse("0:05");
-                tripStop.DepartureTime = departureTime;
+                tripStop.DepartureTime = (departureTime == null) ? tripStop.ArrivalTime + TimeSpan.Parse("0:05") : TimeSpan.Parse(departureTime);
                 tripStop.TrainId = Train.Id;
                 _timeTable.Add(tripStop);
                 return this;
             }
-            throw new ArgumentOutOfRangeException(
+
+            throw new TimeOutOfRangeException(
                 $"Minimum travel time for train {Train.Id} from station {lastRecord.StationId} " +
                 $"to station {stationId} is {minTravelTime}");
         }
