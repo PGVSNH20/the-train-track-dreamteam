@@ -75,10 +75,12 @@ namespace TrainEngine.Travel
                     Thread.Sleep(waitTime / timeFastForward);
                     Console.WriteLine($"Train {trainTimeTable[i].TrainId} arrived att station {trainTimeTable[i].StationId} at {fakeClock} o´clock");
                 }
+
                 if (trainTimeTable[i].DepartureTime != null)
                 {
                     waitTime = Convert.ToInt32(((TimeSpan)trainTimeTable[i].DepartureTime - fakeClock).TotalMilliseconds);
                     fakeClock += (TimeSpan)trainTimeTable[i].DepartureTime - fakeClock;
+
                     if (trainTimeTable[i] == trainTimeTable.Last())
                         Console.WriteLine($"Train {trainTimeTable[i].TrainId} reached final destination");
                     else
@@ -121,16 +123,13 @@ namespace TrainEngine.Travel
                     if (previusLink != null)
                     {
                         lock (LinksInUse)
-                        {
                             LinksInUse.Remove(previusLink);
-                        }
+
                         if (trainTimeTable[i + 1].DepartureTime != null)
                         {
                             var stopAtStationTime = Convert.ToInt32((trainTimeTable[i + 1].DepartureTime - trainTimeTable[i + 1].ArrivalTime).Value.Milliseconds);
                             if (stopAtStationTime > 0)
-                            {
                                 Thread.Sleep(stopAtStationTime / timeFastForward);
-                            }
                         }
                     }
 
@@ -145,24 +144,18 @@ namespace TrainEngine.Travel
                     };
 
                     lock (LinksInUse)
-                    {
                         if (LinksInUse.Find(l => (l.LinkId == link.Key && l.Direction != tripDirection)) != null)
                         {
                             Console.WriteLine($"TRAIN CRASH!!! " +
                                 $"Train {trainId} and train " +
                                 $"{LinksInUse.Find(l => l.LinkId == link.Key).UsedByTrainId} ON LINK {link.Key}");
                         }
-                    }
 
                     lock (LinksInUse)
-                    {
                         LinksInUse.Add(currentLink);
-                    }
 
                     if (waitTime > 0)
-                    {
                         Thread.Sleep(waitTime / timeFastForward);
-                    }
 
                     previusLink = currentLink;
                 }

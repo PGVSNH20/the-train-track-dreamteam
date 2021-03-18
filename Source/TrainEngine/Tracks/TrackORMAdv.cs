@@ -21,8 +21,8 @@ namespace TrainEngine.Tracks
         public TrackORMAdv()
         {
             SourceFile = @"Data\traintrack4.txt";
-            _Read();
-            _AddTracks();
+            Read();
+            AddTracks();
             Tracks = Tracks.OrderBy(t => t.StartStation.Id).ToList();
         }
 
@@ -31,14 +31,14 @@ namespace TrainEngine.Tracks
             if (file)
             {
                 SourceFile = sringInput;
-                _Read();
+                Read();
             }
             else
             {
-                _Read(false, sringInput);
+                Read(false, sringInput);
             }
 
-            _AddTracks();
+            AddTracks();
             Tracks = Tracks.OrderBy(t => t.StartStation.Id).ToList();
         }
 
@@ -46,9 +46,9 @@ namespace TrainEngine.Tracks
 
         public int GetTripLength(int beginStationId, int finishStationId)
         {
-            var tracks = _FindTripTracks(beginStationId, finishStationId, "to east");
+            var tracks = FindTripTracks(beginStationId, finishStationId, "to east");
             if (tracks == null)
-                tracks = _FindTripTracks(beginStationId, finishStationId, "to west");
+                tracks = FindTripTracks(beginStationId, finishStationId, "to west");
             int trackLength = 0;
             foreach (var track in tracks)
             {
@@ -59,9 +59,9 @@ namespace TrainEngine.Tracks
 
         public string GetTripDirection(int beginStationId, int finishStationId)
         {
-            if (_FindTripTracks(beginStationId, finishStationId, "to east") != null)
+            if (FindTripTracks(beginStationId, finishStationId, "to east") != null)
                 return "to east";
-            if (_FindTripTracks(beginStationId, finishStationId, "to west") != null)
+            if (FindTripTracks(beginStationId, finishStationId, "to west") != null)
                 return "to west";
             return string.Empty;
         }
@@ -69,11 +69,11 @@ namespace TrainEngine.Tracks
         public TimeSpan GetMinTripTravelTime(int trainId, int beginStationId, int finishStationId)
         {
             var direction = "to east";
-            var tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
             if (tripTracks == null)
             {
                 direction = "to west";
-                tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
             }
 
             if (tripTracks == null)
@@ -98,11 +98,11 @@ namespace TrainEngine.Tracks
             var maxSpeed = trains.GetTrainById(trainId).MaxSpeed;
 
             var direction = "to east";
-            var tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
             if (tripTracks == null)
             {
                 direction = "to west";
-                tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
             }
 
             foreach (var tripTrack in tripTracks)
@@ -123,11 +123,11 @@ namespace TrainEngine.Tracks
         public TimeSpan GetTripTravelTime(int speed, int beginStationId, int finishStationId)
         {
             var direction = "to east";
-            var tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
             if (tripTracks == null)
             {
                 direction = "to west";
-                tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
             }
 
             var trains = new TrainsOrm();
@@ -144,12 +144,12 @@ namespace TrainEngine.Tracks
 
             var direction = "to east";
             stackOverflowConroller = 0;
-            var tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+            var tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
             if (tripTracks == null)
             {
                 direction = "to west";
                 stackOverflowConroller = 0;
-                tripTracks = _FindTripTracks(beginStationId, finishStationId, direction);
+                tripTracks = FindTripTracks(beginStationId, finishStationId, direction);
             }
             if (tripTracks == null)
             {
@@ -205,7 +205,7 @@ namespace TrainEngine.Tracks
 
         //internal methods
 
-        private void _Read(bool file = true, string trackString = "")
+        private void Read(bool file = true, string trackString = "")
         {
             string[] dataString;
             if (file)
@@ -237,14 +237,14 @@ namespace TrainEngine.Tracks
             }
         }
 
-        private void _AddTracks()
+        private void AddTracks()
         {
             var track = new Track();
             while (track.EndStation == null)
             {
-                char? trackSymbol = _FindNextSymbol();
+                char? trackSymbol = FindNextSymbol();
 
-                if (_IsTrackPart(trackSymbol))
+                if (IsTrackPart(trackSymbol))
                     track.NumberOfTrackParts++;
 
                 if (trackSymbol == '=')
@@ -252,12 +252,12 @@ namespace TrainEngine.Tracks
 
                 while (track.StartStation == null)
                 {
-                    track.StartStation = _AddStartStation(trackSymbol);
+                    track.StartStation = AddStartStation(trackSymbol);
                 }
                 while (trackSymbol != null)
                 {
-                    trackSymbol = _FindNextSymbol();
-                    if (_IsTrackPart(trackSymbol))
+                    trackSymbol = FindNextSymbol();
+                    if (IsTrackPart(trackSymbol))
                         track.NumberOfTrackParts++;
 
                     if (trackSymbol == '=')
@@ -276,30 +276,30 @@ namespace TrainEngine.Tracks
                     if (trackSymbol == '[')
                     {
                         var startPos = _prevPos;
-                        track.EndStation = _AddEndStation(trackSymbol);
+                        track.EndStation = AddEndStation(trackSymbol);
                         if (!track.EndStation.IsEndStation)
                         {
                             _currentPos = startPos;
-                            _AddTracks();
+                            AddTracks();
                         }
                         break;
                     }
 
                     if (trackSymbol == '<')
                     {
-                        _AddBranchTrack(track);
+                        AddBranchTrack(track);
                     }
                 }
             }
-            track.TrackLinks = _FindTrackLinks(track);
+            track.TrackLinks = FindTrackLinks(track);
             Tracks.Add(track);
         }
 
-        private void _AddBranchTrack(Track mainTrack)
+        private void AddBranchTrack(Track mainTrack)
         {
             var savedPrevPos = _prevPos;
             var savedCurrentPos = _currentPos;
-            _FindNextSymbol();
+            FindNextSymbol();
             var ignorPos = _currentPos;
             _prevPos = savedCurrentPos;
             _currentPos = savedCurrentPos;
@@ -323,11 +323,11 @@ namespace TrainEngine.Tracks
 
             while (branchTrack.EndStation == null)
             {
-                char? trackSymbol = _FindNextSymbol(ignorPos);
+                char? trackSymbol = FindNextSymbol(ignorPos);
                 while (trackSymbol != null)
                 {
-                    trackSymbol = _FindNextSymbol();
-                    if (_IsTrackPart(trackSymbol))
+                    trackSymbol = FindNextSymbol();
+                    if (IsTrackPart(trackSymbol))
                         branchTrack.NumberOfTrackParts++;
                     if (trackSymbol == '=')
                         branchTrack.CrossingsAtTrackPart.Add(branchTrack.NumberOfTrackParts);
@@ -345,28 +345,28 @@ namespace TrainEngine.Tracks
                     {
                         var startPos = _prevPos;
                         var endPos = _currentPos;
-                        branchTrack.EndStation = _AddEndStation(trackSymbol);
+                        branchTrack.EndStation = AddEndStation(trackSymbol);
                         if (!branchTrack.EndStation.IsEndStation)
                         {
                             _currentPos = startPos;
-                            _AddTracks();
+                            AddTracks();
                         }
                         _currentPos = endPos;
                         break;
                     }
                     if (trackSymbol == '<')
                     {
-                        _AddBranchTrack(branchTrack);
+                        AddBranchTrack(branchTrack);
                     }
                 }
             }
-            branchTrack.TrackLinks = _FindTrackLinks(branchTrack);
+            branchTrack.TrackLinks = FindTrackLinks(branchTrack);
             Tracks.Add(branchTrack);
             _prevPos = savedPrevPos;
             _currentPos = savedCurrentPos;
         }
 
-        private bool _IsTrackPart(char? scanResult)
+        private bool IsTrackPart(char? scanResult)
         {
             if (scanResult == '-' ||
                 scanResult == '>' ||
@@ -378,22 +378,21 @@ namespace TrainEngine.Tracks
             return false;
         }
 
-        private Station _AddEndStation(char? scanResult)
+        private Station AddEndStation(char? scanResult)
         {
             var station = new Station();
             string stationId = string.Empty;
             while (scanResult != ']')
             {
-                scanResult = _FindNextSymbol();
+                scanResult = FindNextSymbol();
                 if (scanResult == ']')
                 {
                     var savedPrevPos = _prevPos;
                     var savedCurrentPos = _currentPos;
-                    scanResult = _FindNextSymbol();
+                    scanResult = FindNextSymbol();
+
                     if (scanResult == null)
-                    {
                         station.IsEndStation = true;
-                    }
                     else station.IsEndStation = false;
                     _prevPos = savedPrevPos;
                     _currentPos = savedCurrentPos;
@@ -405,7 +404,7 @@ namespace TrainEngine.Tracks
             return station;
         }
 
-        private Station _AddStartStation(char? scanResult)
+        private Station AddStartStation(char? scanResult)
         {
             var station = new Station();
             string stationId = string.Empty;
@@ -415,7 +414,7 @@ namespace TrainEngine.Tracks
 
             while (scanResult != ']')
             {
-                scanResult = _FindNextSymbol();
+                scanResult = FindNextSymbol();
                 if (scanResult == ']')
                     break;
                 stationId += scanResult.ToString();
@@ -424,7 +423,7 @@ namespace TrainEngine.Tracks
             return station;
         }
 
-        private char? _FindNextSymbol((int x, int y)? ignorPosition = null)
+        private char? FindNextSymbol((int x, int y)? ignorPosition = null)
         {
             (int x, int y) pOld = _prevPos;
             (int x, int y) p = _currentPos;
@@ -476,7 +475,7 @@ namespace TrainEngine.Tracks
             }
         }
 
-        private List<Track> _FindTripTracks(int beginStationId, int finishStationId, string direction)
+        private List<Track> FindTripTracks(int beginStationId, int finishStationId, string direction)
         {
             if (stackOverflowConroller++ > 100)
                 return null;
@@ -492,12 +491,10 @@ namespace TrainEngine.Tracks
                     var tripTracks = new List<Track>();
                     tripTracks.Add(currentTrack);
                     if (currentTrack.EndStation.Id == finishStationId)
-                    {
                         return tripTracks;
-                    }
                     else
                     {
-                        var tmpResult = _FindTripTracks(currentTrack.EndStation.Id, finishStationId, direction);
+                        var tmpResult = FindTripTracks(currentTrack.EndStation.Id, finishStationId, direction);
                         if (tmpResult != null)
                         {
                             tripTracks.AddRange(tmpResult);
@@ -506,24 +503,23 @@ namespace TrainEngine.Tracks
                     }
                 }
             }
+
             if (direction == "to west")
             {
                 List<Track> currentTracks = new List<Track>();
                 lock (Tracks)
-                {
                     currentTracks = Tracks.FindAll(t => t.EndStation.Id == beginStationId);
-                }
+
                 foreach (Track currentTrack in currentTracks)
                 {
                     var tripTracks = new List<Track>();
                     tripTracks.Add(currentTrack);
+
                     if (currentTrack.StartStation.Id == finishStationId)
-                    {
                         return tripTracks;
-                    }
                     else
                     {
-                        var tmpResult = _FindTripTracks(currentTrack.StartStation.Id, finishStationId, direction);
+                        var tmpResult = FindTripTracks(currentTrack.StartStation.Id, finishStationId, direction);
                         if (tmpResult != null)
                         {
                             tripTracks.AddRange(tmpResult);
@@ -532,11 +528,10 @@ namespace TrainEngine.Tracks
                     }
                 }
             }
-
             return null;
         }
 
-        private List<Link> _FindTrackLinks(Track track)
+        private List<Link> FindTrackLinks(Track track)
         {
             var trackLinks = new List<Link>();
             var trackPartCounter = 0;
